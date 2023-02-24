@@ -13,8 +13,8 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     (async () => {
-      //   const enabled = await BluetoothManager.isBluetoothEnabled();
-      setBluetoothEnabled(enabled);
+      // const enabled = await BluetoothManager.isBluetoothEnabled();
+      // setBluetoothEnabled(enabled);
     })();
   }, []);
 

@@ -3,6 +3,8 @@ import { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { FlatList } from "react-native";
 import OrderCard from "./components/OrderCard";
+import { useListOrdersQuery } from "../../Redux/orders/ordersApiSlice";
+import { LinearProgress } from "@rneui/themed";
 
 const mockData = [
   {
@@ -19,15 +21,12 @@ const mockData = [
   },
 ];
 
-const Item = ({ item, onPress, backgroundColor, textColor }) => (
-  <TouchableOpacity onPress={onPress} className={`${backgroundColor}`}>
-    <Text className={`${textColor}`}> {item.title} </Text>
-  </TouchableOpacity>
-);
-
 const PendingOrders = () => {
   const [selectedId, setSelectedId] = useState();
+  const { data, isLoading, isFetching } = useListOrdersQuery();
+
   const renderItem = ({ item }) => {
+    if (item.attributes.status.status_name === "Completed") return;
     const backgroundColor =
       item.id === selectedId ? "bg-red-500" : "bg-gray-300";
     const textColor = item.id === selectedId ? "text-white" : "text-black";
@@ -43,12 +42,17 @@ const PendingOrders = () => {
   };
 
   return (
-    <FlatList
-      data={mockData}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-      extraData={selectedId}
-    />
+    <>
+      {isLoading && <LinearProgress value={"inderteminate"} />}
+      {!isLoading && data && (
+        <FlatList
+          data={data?.data}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          extraData={selectedId}
+        />
+      )}
+    </>
   );
 };
 

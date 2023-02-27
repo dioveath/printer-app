@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { View, Text, ScrollView } from "react-native";
 import { ListItem, Icon, Button } from "@rneui/themed";
 import { Avatar } from '@rneui/base';
+// import { BluetoothManager } from 'react-native-bluetooth-escpos-printer';
 
 export default function OptionScreen() {
   const [expanded, setExpanded] = useState(false);
+
 
   return (
     <ScrollView className="flex-1">

@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { Icon } from "@rneui/themed";
+import { Icon, Button } from "@rneui/themed";
 import { TouchableOpacity } from "react-native";
 
 export default function OrderCard({
@@ -35,6 +35,7 @@ export default function OrderCard({
       <View>
         <Text className="font-bold"> Orders </Text>
       </View>
+      <Button> Print Receipt </Button>
     </TouchableOpacity>
   );
 }

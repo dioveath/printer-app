@@ -3,6 +3,7 @@
     "name": "printer-app",
     "slug": "printer-app",
     "version": "1.0.0",
+    "sdkVersion": "47.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,9 +19,11 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.charicha.printerapp",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.charicha.printerapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"

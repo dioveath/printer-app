@@ -6,7 +6,7 @@ import { LinearProgress } from "@rneui/themed";
 
 const CompletedOrders = () => {
   const [selectedId, setSelectedId] = useState();
-  const { data, isLoading } = useListOrdersQuery();
+  const { data, isLoading, isFetching, refetch } = useListOrdersQuery();
 
   const renderItem = ({ item }) => {
     if (item.attributes.status.status_name !== "Completed") return;
@@ -33,6 +33,8 @@ const CompletedOrders = () => {
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           extraData={selectedId}
+          refreshing={isFetching}
+          onRefresh={refetch}
         />
       )}
     </>

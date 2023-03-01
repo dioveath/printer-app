@@ -6,24 +6,9 @@ import OrderCard from "./components/OrderCard";
 import { useListOrdersQuery } from "../../Redux/orders/ordersApiSlice";
 import { LinearProgress } from "@rneui/themed";
 
-const mockData = [
-  {
-    id: "1",
-    title: "Not Completed Orders",
-  },
-  {
-    id: "2",
-    title: "Jumbo Orders",
-  },
-  {
-    id: "3",
-    title: "Welcome Orders",
-  },
-];
-
 const PendingOrders = () => {
   const [selectedId, setSelectedId] = useState();
-  const { data, isLoading, isFetching } = useListOrdersQuery();
+  const { data, isLoading, isFetching, refetch } = useListOrdersQuery();
 
   const renderItem = ({ item }) => {
     if (item.attributes.status.status_name === "Completed") return;
@@ -50,6 +35,8 @@ const PendingOrders = () => {
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           extraData={selectedId}
+          refreshing={isFetching}
+          onRefresh={refetch}
         />
       )}
     </>

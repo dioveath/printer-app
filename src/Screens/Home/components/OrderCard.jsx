@@ -2,6 +2,16 @@ import { View, Text } from "react-native";
 import React from "react";
 import { Icon, Button } from "@rneui/themed";
 import { TouchableOpacity } from "react-native";
+import { useUpdateOrderMutation } from "../../../Redux/orders/ordersApiSlice";
+
+const DELIVERY_STATUS = [
+  "Empty",
+  "Received",
+  "Pending",
+  "Preparation",
+  "Delivery",
+  "Completed",
+];
 
 export default function OrderCard({
   item,
@@ -9,6 +19,13 @@ export default function OrderCard({
   backgroundColor,
   textColor,
 }) {
+  const [updateOrder, { isFetching }] = useUpdateOrderMutation();
+
+  const updateStatus = () => {
+    console.log("Updating");
+    updateOrder({id: item.id, status_id: item.attributes.status_id+1});
+  }
+  
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -29,13 +46,20 @@ export default function OrderCard({
         </View>
       </View>
       <View>
-        <Text> { item.attributes.first_name } { item.attributes.last_name } </Text>
+        <Text>
+          {item.attributes.first_name} {item.attributes.last_name}{" "}
+        </Text>
       </View>
       <View className="h-[1px] bg-gray-400/50 rounded-md" />
       <View>
         <Text className="font-bold"> Orders </Text>
       </View>
       <Button> Print Receipt </Button>
+      {item.attributes.status_id !== 5 && (
+        <Button color={'secondary'} onPress={updateStatus} loading={isFetching}>
+          {DELIVERY_STATUS[item.attributes.status_id + 1]}
+        </Button>
+      )}
     </TouchableOpacity>
   );
 }

@@ -1,12 +1,14 @@
 import { View, Text, TextInput } from "react-native";
-import React, { useState, createRef, useRef } from "react";
+import React, { useState, useEffect, createRef, useRef } from "react";
 import { Input, Button, Icon } from "@rneui/themed";
 import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../../Redux/auth/authApiSlice";
 import { setCredentials } from "../../Redux/auth/authSlice";
+import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 
 
 export default function Auth() {
+  const { getItem, setItem } = useAsyncStorage("credentials");
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -23,12 +25,19 @@ export default function Auth() {
 
     try {
       const { token } = await login(creds).unwrap();
-      dispatch(setCredentials({ accessToken: token }));
+      setItem(token).then(() => dispatch(setCredentials({ accessToken: token })));
     } catch (e) {
       if (e?.data) console.log(e?.data?.message);
       else console.log(e?.message);
     }
   };
+
+  useEffect(() => {
+    getItem().then((token) => {
+      if (token) dispatch(setCredentials({ accessToken: token }));
+    });
+  }, [])
+    
 
   return (
     <View className="flex-1 justify-center items-center">

@@ -65,11 +65,13 @@ export default function OptionScreen() {
       }
     }
 
-    if(!ds) return;
-    console.log(ds);
-    // newPaired = uniqByKeepLast(newPaired, it => it.address);
-    // setPaired(newPaired);
-    // console.log(newPaired);
+    if (!ds) return;
+    let newPaired = [...ds, ...paired];
+
+    newPaired = uniqByKeepLast(newPaired, (it) => it.address);
+
+    console.log(newPaired);
+    setPaired(newPaired);
   };
 
   const deviceFound = (rsp) => {
@@ -175,11 +177,13 @@ export default function OptionScreen() {
           </>
         }
       >
-        {paired.map((d) => (
-          <ListItem bottomDivider>
-            <ListItem.Title> {d.name} </ListItem.Title>
-          </ListItem>
-        ))}
+        {paired.map((d, idx) => {
+          return (
+            <ListItem bottomDivider key={idx}>
+              <ListItem.Title> {d.name} </ListItem.Title>
+            </ListItem>
+          );
+        })}
       </ListItem.Accordion>
       <ListItem.Accordion
         isExpanded={!enabled ? false : expanded}

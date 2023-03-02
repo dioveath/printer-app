@@ -21,7 +21,6 @@ const authSlice = createSlice({
       //   localStorage.setItem("accessToken", action.payload.accessToken);
       //   localStorage.setItem("userId", action.payload.userId);
     },
-
     updateToken: (state, _action) => {
       const token = localStorage.getItem("accessToken");
       if (!token) {

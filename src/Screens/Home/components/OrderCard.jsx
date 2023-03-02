@@ -3,6 +3,7 @@ import React from "react";
 import { Icon, Button } from "@rneui/themed";
 import { TouchableOpacity } from "react-native";
 import { useUpdateOrderMutation } from "../../../Redux/orders/ordersApiSlice";
+import EscPosPrinter from 'react-native-esc-pos-printer';
 
 const DELIVERY_STATUS = [
   "Empty",
@@ -22,10 +23,36 @@ export default function OrderCard({
   const [updateOrder, { isFetching }] = useUpdateOrderMutation();
 
   const updateStatus = () => {
-    console.log("Updating");
-    updateOrder({id: item.id, status_id: item.attributes.status_id+1});
-  }
-  
+    console.log("Updating order status...");
+    updateOrder({ id: item.id, status_id: item.attributes.status_id + 1 });
+  };
+
+  const printReceipt = () => {
+    console.log("Printing receipt...");
+    // check if there is a active connection to printer
+    // if not, navigate to options screen
+    // try {
+    //   const printing = new EscPosPrinter.printing();
+    //   const status = printing
+    //     .initialize()
+    //     .alignCenter()
+    //     .size(2,2)
+    //     .text("SliceUp Pizza")
+    //     .newLine()
+    //     .align('left')
+     //     .text(`Date: ${new Date(item.attributes.order_date).toLocaleString()}`)
+    //     .align('right')
+    //     .text(`Order ID: ${item.id}`)
+    //     .newLine()
+    //     .textLine(48, { gapSymbol: "-" })
+    //     .cut();
+
+    //     console.log(status);
+    // } catch (err) {
+    //   console.log("Error: " + err.message);
+    // }
+  };
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -54,9 +81,9 @@ export default function OrderCard({
       <View>
         <Text className="font-bold"> Orders </Text>
       </View>
-      <Button> Print Receipt </Button>
+      <Button onPress={printReceipt}> Print Receipt </Button>
       {item.attributes.status_id !== 5 && (
-        <Button color={'secondary'} onPress={updateStatus} loading={isFetching}>
+        <Button color={"secondary"} onPress={updateStatus} loading={isFetching}>
           {DELIVERY_STATUS[item.attributes.status_id + 1]}
         </Button>
       )}

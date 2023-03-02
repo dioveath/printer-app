@@ -1,23 +1,21 @@
 import { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  Platform,
-  DeviceEventEmitter,
-} from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import { ListItem, Icon, Switch, Button } from "@rneui/themed";
 import { Avatar } from "@rneui/base";
 import {
   BluetoothManager,
   BluetoothTscPrinter,
 } from "react-native-bluetooth-escpos-printer";
-import { uniqByKeepLast } from "../../Helpers/misc";
+import EscPosPrinter, {
+  getPrinterSeriesByName,
+} from "react-native-esc-pos-printer";
+import { uniqByKeepFirst } from "../../Helpers/misc";
 
 export default function OptionScreen() {
   const [expanded, setExpanded] = useState(false);
   const [enabled, setEnabled] = useState(false);
-  const [paired, setPaired] = useState([]);
+  const [found, setFound] = useState([]);
+  const [connected, setConnected] = useState([]);
 
   const toggleBluetooth = async (value) => {
     try {
@@ -39,85 +37,34 @@ export default function OptionScreen() {
     }
   };
 
-  const scanDevices = () =>
-    BluetoothManager.scanDevices().then(
-      (s) => {
-        const ss = JSON.parse(s);
-        console.log(ss);
-        // setDevices({ paired, found });
-      },
-      (er) => {
-        console.log("Error: " + JSON.stringify(er));
-      }
-    );
-
-  const deviceAlreadyPaired = (rsp) => {
-    if (!rsp) return;
-
-    let ds = null;
-    if (typeof rsp === "object") {
-      ds = rsp.devices;
-    } else {
-      try {
-        ds = JSON.parse(`${rsp.devices}`);
-      } catch (err) {
-        console.log("Error: " + err.message);
-      }
+  const scanDevices = async () => {
+    try {
+      const printers = await EscPosPrinter.discover();
+      setFound(printers);
+      console.log(printers);
+    } catch (err) {
+      console.log("Error: " + JSON.stringify(err));
     }
-
-    if (!ds) return;
-    let newPaired = [...ds, ...paired];
-
-    newPaired = uniqByKeepLast(newPaired, (it) => it.address);
-
-    console.log(newPaired);
-    setPaired(newPaired);
   };
-
-  const deviceFound = (rsp) => {
-    var foundDevice = null;
-    if (typeof rsp.device === "object") {
-      foundDevice = rsp.device;
-    } else {
-      try {
-        foundDevice = JSON.parse(rsp.device);
-      } catch (e) {
-        console.log("Error: " + e.message);
-      }
-    }
-
-    console.log("FOUND DEVICE");
-    console.log(foundDevice);
-  };
-
-  const listeners = [];
-  if (Platform.OS === "android") {
-    listeners.push(
-      DeviceEventEmitter.addListener(
-        BluetoothManager.EVENT_DEVICE_ALREADY_PAIRED,
-        deviceAlreadyPaired
-      )
-    );
-    listeners.push(
-      DeviceEventEmitter.addListener(
-        BluetoothManager.EVENT_DEVICE_FOUND,
-        deviceFound
-      )
-    );
-    listeners.push(
-      DeviceEventEmitter.addListener(
-        BluetoothManager.EVENT_CONNECTION_LOST,
-        () => {
-          console.log("connection lost!");
-        }
-      )
-    );
-  }
 
   useEffect(() => {
     (async () => {
       await pollAndSetBluetooth();
     })();
+  }, []);
+
+  useEffect(() => {
+    const listener = (status) => {
+      if (status.connection !== "CONNECT") setConnected([]);
+      console.info(status.connection, status.online, status.paper);
+    };
+    EscPosPrinter.addPrinterStatusListener(listener);
+    EscPosPrinter.startMonitorPrinter(30)
+      .then(() => console.log("Started monitoring printer status"))
+      .catch((e) => console.log(e));
+    return () => {
+      EscPosPrinter.stopMonitorPrinter();
+    };
   }, []);
 
   return (
@@ -143,22 +90,24 @@ export default function OptionScreen() {
         <Button
           onPress={async () => {
             try {
-              await BluetoothTscPrinter.printLabel({
-                width: 40,
-                height: 30,
-                text: [
-                  {
-                    text: "This is test",
-                    x: 20,
-                    y: 50,
-                    rotation: BluetoothTscPrinter.ROTATION.ROTATION_0,
-                    xscal: BluetoothTscPrinter.FONTMUL.MUL_1,
-                    yscal: BluetoothTscPrinter.FONTMUL.MUL_1,
-                  },
-                ],
-              });
-            } catch (err) {
-              console.log("Error: " + JSON.stringify(err));
+              const printing = new EscPosPrinter.printing();
+              console.log(printing);
+              const status = await printing
+                .initialize()
+                .align("center")
+                .size(1, 1)
+                .line("CONNECTION TEST")
+                .newline()
+                .textLine(48, {
+                  left: "CONNECTION",
+                  right: "OK",
+                  gapSymbol: "-",
+                })
+                .cut()
+                .send();
+              console.log(status);
+            } catch (e) {
+              console.log("Error: " + e.message);
             }
           }}
         >
@@ -172,15 +121,34 @@ export default function OptionScreen() {
           <>
             <Icon type="antdesign" name="printer" size={30} />
             <ListItem.Content>
-              <ListItem.Title> Paired Devices </ListItem.Title>
+              <ListItem.Title> Scanned Printers </ListItem.Title>
             </ListItem.Content>
           </>
         }
       >
-        {paired.map((d, idx) => {
+        {found.map((d) => {
           return (
-            <ListItem bottomDivider key={idx}>
+            <ListItem
+              bottomDivider
+              key={d.bt}
+              onPress={async () => {
+                console.log(d);
+                try {
+                  console.log("Connecting to: " + d.bt);
+                  await EscPosPrinter.init({
+                    target: d.target,
+                    seriesName: getPrinterSeriesByName(d.name),
+                    language: "EPOS2_LANG_EN",
+                  });
+                  setConnected([d]);
+                  console.log("Connected to: " + d.bt);
+                } catch (e) {
+                  console.log("Error: " + e.message);
+                }
+              }}
+            >
               <ListItem.Title> {d.name} </ListItem.Title>
+              <ListItem.Subtitle> {d.bt} </ListItem.Subtitle>
             </ListItem>
           );
         })}
@@ -192,19 +160,22 @@ export default function OptionScreen() {
           <>
             <Icon type="antdesign" name="printer" size={30} />
             <ListItem.Content>
-              <ListItem.Title> Conneceted Printers </ListItem.Title>
+              <ListItem.Title> Active Printer </ListItem.Title>
             </ListItem.Content>
           </>
         }
       >
-        <ListItem bottomDivider>
-          <Avatar title="Name" />
-          <ListItem.Content>
-            <ListItem.Title> Saroj </ListItem.Title>
-            <ListItem.Subtitle> Software Engineer @ Google </ListItem.Subtitle>
-          </ListItem.Content>
-          <ListItem.Chevron />
-        </ListItem>
+        {connected.map((d) => {
+          return (
+            <ListItem bottomDivider key={d.bt}>
+              <ListItem.Content>
+                <ListItem.Title> {d.name} </ListItem.Title>
+                <ListItem.Subtitle> {d.bt} </ListItem.Subtitle>
+              </ListItem.Content>
+              <ListItem.Chevron />
+            </ListItem>
+          );
+        })}
       </ListItem.Accordion>
     </ScrollView>
   );

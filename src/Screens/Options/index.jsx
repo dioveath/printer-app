@@ -30,6 +30,7 @@ export default function OptionScreen() {
 
   const pollAndSetBluetooth = async () => {
     try {
+
       const check = await BluetoothManager.isBluetoothEnabled();
       setEnabled(check);
     } catch (err) {
@@ -91,7 +92,6 @@ export default function OptionScreen() {
           onPress={async () => {
             try {
               const printing = new EscPosPrinter.printing();
-              console.log(printing);
               const status = await printing
                 .initialize()
                 .align("center")
@@ -103,9 +103,10 @@ export default function OptionScreen() {
                   right: "OK",
                   gapSymbol: "-",
                 })
+                .newline()
                 .cut()
                 .send();
-              console.log(status);
+              console.log("SUCCESS: " + status);
             } catch (e) {
               console.log("Error: " + e.message);
             }

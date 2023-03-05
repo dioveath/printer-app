@@ -6,5 +6,7 @@
 - Listing all orders from pending to completed (done)
 - Updating orders through the app (done)
 - Add Epson Printer support (done)
-- Print the order receipt
-- Create customizable printer receipt system
+- Print the order receipt (done)
+- Create customizable printer receipt system 
+- Setting up domain on initial screen (done)
+- Status for showcasing if the app is connected to internet and printer

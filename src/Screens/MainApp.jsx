@@ -7,6 +7,8 @@ import Auth from './Auth';
 export default function MainApp() {
   const { accessToken: isLoggedIn } = useSelector((state) => state.auth);
 
+  console.log(isLoggedIn);
+
   return (
     <>
         { isLoggedIn ? <Dashboard/> : <Auth/>}

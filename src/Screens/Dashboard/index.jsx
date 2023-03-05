@@ -22,7 +22,7 @@ export default function Dashboard() {
           name="Option"
           component={OptionScreen}
           options={{
-            title: "Option",
+            title: "Options",
             tabBarIcon: ({ color, size }) => <Icon name="settings" />,
           }}
         />

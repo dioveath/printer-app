@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import { store } from "./src/Redux/store";
 import { Provider } from "react-redux";
 
-import MainApp from "./src/Screens/MainApp";
+import Entry from "./src/Screens/Entry";
 
 const theme = createTheme({
   lightColors: {
@@ -18,7 +18,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <MainApp/>
+        <Entry/>
       </ThemeProvider>
     </Provider>
   );

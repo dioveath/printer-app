@@ -9,9 +9,13 @@ import {
 import EscPosPrinter, {
   getPrinterSeriesByName,
 } from "react-native-esc-pos-printer";
-import { uniqByKeepFirst } from "../../Helpers/misc";
+import { useDispatch } from "react-redux";
+import { logout } from "../../Redux/auth/authSlice";
+import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 
 export default function OptionScreen() {
+  const dispatch = useDispatch();
+  const { removeItem } = useAsyncStorage("credentials");
   const [expanded, setExpanded] = useState(false);
   const [enabled, setEnabled] = useState(false);
   const [found, setFound] = useState([]);
@@ -178,6 +182,14 @@ export default function OptionScreen() {
           );
         })}
       </ListItem.Accordion>
+
+
+        <Button className="w-full flex-1 mx-4 my-2" color={'error'} onPress={async () => {
+          console.log('Logout');
+          await removeItem();
+          dispatch(logout());
+        }}> Logout </Button>
+
     </ScrollView>
   );
 }

@@ -38,7 +38,6 @@ export default function Auth() {
     });
   }, [])
     
-
   return (
     <View className="flex-1 justify-center items-center">
       <View className="w-full px-10">
@@ -61,6 +60,8 @@ export default function Auth() {
         <Button onPress={onLoginClick} loading={isLoading}>
           Login
         </Button>
+
+         <Text> Reset your setup? </Text>
       </View>
     </View>
   );

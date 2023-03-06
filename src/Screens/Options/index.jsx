@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { ListItem, Icon, Switch, Button } from "@rneui/themed";
-import {
-  BluetoothManager,  
-} from "react-native-bluetooth-escpos-printer";
+
 import EscPosPrinter, {
   getPrinterSeriesByName,
 } from "react-native-esc-pos-printer";
@@ -12,10 +10,11 @@ import { logout } from "../../Redux/auth/authSlice";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import { setBTError, setBTStatus, setBTPending } from "../../Redux/connectivity/bluetoothSlice";
 import { setPrinter, setPrinterError, setPrinterPending } from "../../Redux/connectivity/printerSlice";
+import { bleManager } from '../../lib/bleManager';
 
 export default function OptionScreen({ navigation }) {
   const dispatch = useDispatch();
-  const enabled = useSelector((state) => state.bluetooth.isEnabled);
+  const { isEnabled: enabled, isPending } = useSelector((state) => state.bluetooth);
   const connectedPrinter = useSelector((state) => state.printer.device);
   const { removeItem } = useAsyncStorage("credentials");
   const [found, setFound] = useState([]);
@@ -24,8 +23,8 @@ export default function OptionScreen({ navigation }) {
   const toggleBluetooth = async (value) => {
     try {
       dispatch(setBTPending());
-      if (value) await BluetoothManager.enableBluetooth();
-      else await BluetoothManager.disableBluetooth();
+      if (value) await bleManager.enable("transactionId");
+      else await bleManager.disable("transactionId");      
       dispatch(setBTStatus({ isEnabled: value }));
     } catch (err) {
       console.log("Error: " + JSON.stringify(err));
@@ -70,7 +69,7 @@ export default function OptionScreen({ navigation }) {
       <View className="flex flex-row justify-between items-center my-4 px-6">
         <Text className="text-lg"> Bluetooth </Text>
         <Switch
-          disabled={scanning}
+          disabled={scanning || isPending}
           value={enabled}
           onValueChange={(value) => toggleBluetooth(value)}
         />

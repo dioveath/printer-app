@@ -7,7 +7,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AddPrinter from "../Options/AddPrinter";
 import { useEffect } from "react";
 
-import { BluetoothManager } from "react-native-bluetooth-escpos-printer";
+import { bleManager } from '../../lib/bleManager';
 import { useDispatch } from "react-redux";
 import { setBTError, setBTStatus, setBTPending } from "../../Redux/connectivity/bluetoothSlice";
 import { setPrinter } from "../../Redux/connectivity/printerSlice";
@@ -55,23 +55,18 @@ const DashboardNavigator = () => {
 
 export default function Dashboard() {
   const dispatch = useDispatch();
-  const pollAndSetBluetooth = async () => {
-    try {
-      dispatch(setBTPending());
-      const check = await BluetoothManager.isBluetoothEnabled();
-      dispatch(setBTStatus({ isEnabled: check }));
-      if(!check) dispatch(setPrinter({ device: null }));
-    } catch (err) {
-      dispatch(setBTError({ error: err }));
-      dispatch(setPrinter({ device: null }));
-      console.log("Error: " + JSON.stringify(err));
-    }
-  };
-
+  
   useEffect(() => {
-    (async () => {
-      await pollAndSetBluetooth();
-    })();
+    const subscription = bleManager.onStateChange((state) => {
+      if (state === "PoweredOn") {
+        dispatch(setBTStatus({ isEnabled: true }));
+      } else {
+        dispatch(setBTStatus({ isEnabled: false }));
+        dispatch(setPrinter({ device: null }));
+      }
+    }, true);
+
+    return () => subscription.remove();
   }, []);
 
   return (

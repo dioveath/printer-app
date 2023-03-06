@@ -2,7 +2,7 @@
   "expo": {
     "name": "printer-app",
     "slug": "printer-app",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "sdkVersion": "48.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -31,6 +31,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a2599bd7-10e6-431e-bf0e-1a5fedaf1334"
+      }
     }
   }
 }

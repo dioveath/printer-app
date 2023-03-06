@@ -1,98 +1,94 @@
 import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { ListItem, Icon, Switch, Button } from "@rneui/themed";
-import { Avatar } from "@rneui/base";
 import {
-  BluetoothManager,
-  BluetoothTscPrinter,
+  BluetoothManager,  
 } from "react-native-bluetooth-escpos-printer";
 import EscPosPrinter, {
   getPrinterSeriesByName,
 } from "react-native-esc-pos-printer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../Redux/auth/authSlice";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
+import { setBTError, setBTStatus, setBTPending } from "../../Redux/connectivity/bluetoothSlice";
+import { setPrinter, setPrinterError, setPrinterPending } from "../../Redux/connectivity/printerSlice";
 
-export default function OptionScreen() {
+export default function OptionScreen({ navigation }) {
   const dispatch = useDispatch();
+  const enabled = useSelector((state) => state.bluetooth.isEnabled);
+  const connectedPrinter = useSelector((state) => state.printer.device);
   const { removeItem } = useAsyncStorage("credentials");
-  const [expanded, setExpanded] = useState(false);
-  const [enabled, setEnabled] = useState(false);
   const [found, setFound] = useState([]);
-  const [connected, setConnected] = useState([]);
-
+  const [scanning, setScanning] = useState(false);
+  
   const toggleBluetooth = async (value) => {
     try {
+      dispatch(setBTPending());
       if (value) await BluetoothManager.enableBluetooth();
       else await BluetoothManager.disableBluetooth();
+      dispatch(setBTStatus({ isEnabled: value }));
     } catch (err) {
       console.log("Error: " + JSON.stringify(err));
-    } finally {
-      await pollAndSetBluetooth();
+      dispatch(setBTError({ error: err }));
     }
   };
 
-  const pollAndSetBluetooth = async () => {
-    try {
-
-      const check = await BluetoothManager.isBluetoothEnabled();
-      setEnabled(check);
-    } catch (err) {
-      console.log("Error: " + JSON.stringify(err));
-    }
-  };
-
+  
   const scanDevices = async () => {
     try {
+      setScanning(true);      
       const printers = await EscPosPrinter.discover();
       setFound(printers);
       console.log(printers);
     } catch (err) {
       console.log("Error: " + JSON.stringify(err));
-    }
+    } finally { setScanning(false); }
   };
 
-  useEffect(() => {
-    (async () => {
-      await pollAndSetBluetooth();
-    })();
-  }, []);
 
   useEffect(() => {
-    const listener = (status) => {
-      if (status.connection !== "CONNECT") setConnected([]);
-      console.info(status.connection, status.online, status.paper);
-    };
-    EscPosPrinter.addPrinterStatusListener(listener);
-    EscPosPrinter.startMonitorPrinter(30)
-      .then(() => console.log("Started monitoring printer status"))
-      .catch((e) => console.log(e));
+    try { 
+      EscPosPrinter.startMonitorPrinter(30)
+        .then(() => console.log("Started monitoring printer status"))
+        .catch((e) => { console.log("Error: Couldn't start monitoring", e) });
+    } catch(e){
+      console.log("Error: Something wrong!", e);
+    }
+    
     return () => {
-      EscPosPrinter.stopMonitorPrinter();
+      console.log("Unmounting");
+      EscPosPrinter.stopMonitorPrinter()
+        .then(() => console.log("Stopped monitoring printer status!"))
+        .catch(e => console.log("Error: Can't stop moniter", e));
     };
-  }, []);
+  }, [!!connectedPrinter]);
 
   return (
     <ScrollView className="flex-1">
-      <Text className="text-2xl font-bold my-2"> Your Printers </Text>
+      <Text className="text-2xl font-bold p-6"> Your Printers </Text>
 
-      <View className="flex flex-row justify-between items-center my-4 px-4">
+      <View className="flex flex-row justify-between items-center my-4 px-6">
         <Text className="text-lg"> Bluetooth </Text>
         <Switch
+          disabled={scanning}
           value={enabled}
           onValueChange={(value) => toggleBluetooth(value)}
         />
-      </View>
+      </View>      
+      
+      <View className="h-[1px] bg-gray-300"/>
 
       <View className="my-4 px-4">
         <Button
           className="py-2 rounded-md"
           onPress={scanDevices}
-          disabled={!enabled}
+          // disabled={!!connectedPrinter}
+          loading={scanning}          
         >
           Scan Devices
         </Button>
         <Button
+          disabled={!connectedPrinter}
           onPress={async () => {
             try {
               const printing = new EscPosPrinter.printing();
@@ -120,8 +116,19 @@ export default function OptionScreen() {
         </Button>
       </View>
 
+      <View className="h-[1px] bg-gray-300 mb-4"/>
+
+      { connectedPrinter && (
+        <View className="my-4 px-4">
+          <Text className="text-lg font-bold"> Connected Printer </Text>
+          <Text className="text-gray-700"> {connectedPrinter.name} </Text>
+          <Text className="text-gray-700"> {connectedPrinter.bt} </Text>
+        </View>
+      )}
+
+
       <ListItem.Accordion
-        isExpanded={!enabled ? false : expanded}
+        isExpanded={!scanning}
         content={
           <>
             <Icon type="antdesign" name="printer" size={30} />
@@ -132,23 +139,29 @@ export default function OptionScreen() {
         }
       >
         {found.map((d) => {
+          if(connectedPrinter && connectedPrinter.bt === d.bt) return;
           return (
             <ListItem
               bottomDivider
               key={d.bt}
               onPress={async () => {
-                console.log(d);
                 try {
                   console.log("Connecting to: " + d.bt);
-                  await EscPosPrinter.init({
+                  dispatch(setPrinterPending());
+                  EscPosPrinter.init({ 
                     target: d.target,
                     seriesName: getPrinterSeriesByName(d.name),
-                    language: "EPOS2_LANG_EN",
+                    language: "EPOS2_LANG_EN"
+                  }).then((status) => {
+                    console.log(status);
+                    dispatch(setPrinter({ device: d }));
+                  }).catch((e) => {
+                    console.log("Init failed: " + e.message);
+                    dispatch(setPrinterError({ error: e.message }));
                   });
-                  setConnected([d]);
-                  console.log("Connected to: " + d.bt);
                 } catch (e) {
-                  console.log("Error: " + e.message);
+                  console.log("Error: " + e.message);                  
+                  dispatch(setPrinterError({ error: e.message }));
                 }
               }}
             >
@@ -158,35 +171,15 @@ export default function OptionScreen() {
           );
         })}
       </ListItem.Accordion>
-      <ListItem.Accordion
-        isExpanded={!enabled ? false : expanded}
-        onPress={() => setExpanded(!expanded)}
-        content={
-          <>
-            <Icon type="antdesign" name="printer" size={30} />
-            <ListItem.Content>
-              <ListItem.Title> Active Printer </ListItem.Title>
-            </ListItem.Content>
-          </>
-        }
-      >
-        {connected.map((d) => {
-          return (
-            <ListItem bottomDivider key={d.bt}>
-              <ListItem.Content>
-                <ListItem.Title> {d.name} </ListItem.Title>
-                <ListItem.Subtitle> {d.bt} </ListItem.Subtitle>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
-          );
-        })}
-      </ListItem.Accordion>
 
+      <ListItem topDivider bottomDivider onPress={() => navigation.navigate('AddPrinter') }>
+        <ListItem.Title> Supported Printers </ListItem.Title>
+      </ListItem>
 
         <Button className="w-full flex-1 mx-4 my-2" color={'error'} onPress={async () => {
           console.log('Logout');
           await removeItem();
+          // dispatch()
           dispatch(logout());
         }}> Logout </Button>
 

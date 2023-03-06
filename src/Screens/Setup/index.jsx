@@ -46,7 +46,7 @@ export default function Setup() {
             if(err?.response) setError(err.response.data.message);
             else setError(err.message);
         } finally {
-            setLoading(false);            
+            setLoading(false);
         }
     };
 

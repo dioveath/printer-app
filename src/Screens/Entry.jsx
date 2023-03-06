@@ -11,16 +11,11 @@ export default function Entry() {
   const domain = useSelector((state) => state.setup);
   const { getItem } = useAsyncStorage("setup");
 
-
   useEffect(() => {
     getItem().then((setup) => {
       if (setup) dispatch(initDomain(JSON.parse(setup)));
     });
   }, []);
-
-  console.log("Has setup");
-  console.log(domain);
-
 
   return <>{domain?.domain ? <MainApp /> : <Setup />}</>;
 }

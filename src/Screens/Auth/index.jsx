@@ -5,10 +5,11 @@ import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../../Redux/auth/authApiSlice";
 import { setCredentials } from "../../Redux/auth/authSlice";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
-
+import { clear } from "../../Redux/setup/setupSlice";
 
 export default function Auth() {
   const { getItem, setItem } = useAsyncStorage("credentials");
+  const { removeItem: removeSetup } = useAsyncStorage("setup");
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +26,9 @@ export default function Auth() {
 
     try {
       const { token } = await login(creds).unwrap();
-      setItem(token).then(() => dispatch(setCredentials({ accessToken: token })));
+      setItem(token).then(() =>
+        dispatch(setCredentials({ accessToken: token }))
+      );
     } catch (e) {
       if (e?.data) console.log(e?.data?.message);
       else console.log(e?.message);
@@ -36,8 +39,8 @@ export default function Auth() {
     getItem().then((token) => {
       if (token) dispatch(setCredentials({ accessToken: token }));
     });
-  }, [])
-    
+  }, []);
+
   return (
     <View className="flex-1 justify-center items-center">
       <View className="w-full px-10">
@@ -51,9 +54,14 @@ export default function Auth() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry={!showPassword}
-          rightIcon={<Icon onPress={() => setShowPassword(!showPassword) } type='entypo' name={showPassword ? 'eye-with-line' : 'eye'}/>}
-        >
-          </Input>
+          rightIcon={
+            <Icon
+              onPress={() => setShowPassword(!showPassword)}
+              type="entypo"
+              name={showPassword ? "eye-with-line" : "eye"}
+            />
+          }
+        ></Input>
         {error && (
           <Text className="text-xs text-red-500"> {error.data.message} </Text>
         )}
@@ -61,7 +69,13 @@ export default function Auth() {
           Login
         </Button>
 
-         <Text> Reset your setup? </Text>
+        <View className='flex flex-row'>
+          <Text> Recofigure your setup? </Text>
+          <Text className='text-red-500' onPress={async () => {
+            await removeSetup();
+            dispatch(clear());
+          }}> Reset </Text>
+        </View>
       </View>
     </View>
   );

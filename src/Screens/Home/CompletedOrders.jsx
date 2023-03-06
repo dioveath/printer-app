@@ -11,13 +11,13 @@ const CompletedOrders = () => {
   const renderItem = ({ item }) => {
     if (item.attributes.status.status_name !== "Completed") return;
     const backgroundColor =
-      item.id === selectedId ? "bg-red-500" : "bg-gray-300";
+      item.id === selectedId ? "bg-gray-500" : "bg-white";
     const textColor = item.id === selectedId ? "text-white" : "text-black";
 
     return (
       <OrderCard
         item={item}
-        onPress={() => setSelectedId(item.id)}
+        // onPress={() => setSelectedId(item.id)}
         backgroundColor={backgroundColor}
         textColor={textColor}
       />

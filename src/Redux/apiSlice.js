@@ -13,7 +13,7 @@ const rawBaseQuery = fetchBaseQuery({
   paramsSerializer: (params) => {
     const paramString = qs.stringify(params);
     return paramString;
-  },  
+  },
 });
 
 const dynamicBaseQuery = async (args, api, extraOptions) => {

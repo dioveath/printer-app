@@ -1,11 +1,12 @@
 import { View, Text } from "react-native";
-import React from "react";
-import { Icon, Button } from "@rneui/themed";
+import React, { useState } from "react";
+import { Icon, Button, ListItem, LinearProgress } from "@rneui/themed";
 import { TouchableOpacity } from "react-native";
 import { useUpdateOrderMutation } from "../../../Redux/orders/ordersApiSlice";
 import EscPosPrinter, {
   getPrinterSeriesByName,
 } from "react-native-esc-pos-printer";
+import { useSelector } from "react-redux";
 
 const DELIVERY_STATUS = [
   "Empty",
@@ -22,14 +23,21 @@ export default function OrderCard({
   backgroundColor,
   textColor,
 }) {
-  const [updateOrder, { isFetching }] = useUpdateOrderMutation();
+  const { device: isConnected } = useSelector((state) => state.printer);
+  const [updateOrder, { isLoading: isFetching }] = useUpdateOrderMutation();
 
   const updateStatus = () => {
     console.log("Updating order status...");
     updateOrder({ id: item.id, status_id: item.attributes.status_id + 1 });
   };
 
+  const revertStatus = () => {
+    console.log("Reverting order status...");
+    updateOrder({ id: item.id, status_id: item.attributes.status_id - 1 });
+  };
+
   const printReceipt = () => {
+    if (!isConnected) return;
     console.log("Printing receipt...");
     // check if there is a active connection to printer
     // if not, navigate to options screen
@@ -122,31 +130,81 @@ export default function OrderCard({
     }
   };
 
+  const findTotal = (order) => {
+    const total = item.attributes.order_totals.find(
+      (o) => o.title === "Order Total"
+    );
+    return total?.value && parseFloat(total.value);
+  };
+
+  const orderStatus = DELIVERY_STATUS[item.attributes.status_id];
+
   return (
-    <TouchableOpacity
+    <ListItem.Swipeable
       onPress={onPress}
-      className={`${backgroundColor} ${textColor} p-2 m-2 rounded-md`}
+      className={`${backgroundColor} text-black border-b-[1px] border-gray-100`}
+      rightContent={(reset) => {
+        return (
+          <TouchableOpacity onPress={printReceipt}>
+          <View
+            className={
+              `w-full h-full flex flex-row items-center justify-center ${isConnected ? "bg-orange-500" : "bg-gray-400"}`
+            }
+          >
+            <Icon
+              name={isConnected ? "printer" : "printer-off"}
+              type="material-community"
+              size={32}
+              color={"white"}
+            />
+          </View>
+          </TouchableOpacity>          
+        );
+      }}
+      leftContent={(reset) => {
+        return (
+          <TouchableOpacity onPress={orderStatus === 'Completed' ? () => {} : updateStatus} disabled={!(orderStatus !== 'Completed')}>
+          <View onPress={() => { console.log("fdsaadsf"); }}
+          className={`w-full h-full flex flex-row items-center justify-center 
+          ${orderStatus === 'Completed' ? 'bg-green-500' : 'bg-orange-500'}`}>
+            { isFetching && <LinearProgress color="secondary" /> }
+            { !isFetching && <Icon name={orderStatus === 'Completed' ? 'check' : 'update'} type="material-comunity"
+              size={32}
+              color={"white"}
+            /> }
+          </View>
+          </TouchableOpacity>
+        )
+      }}
     >
-      <View className="flex flex-row justify-between items-center">
-        <View className="flex flex-row items-center">
-          <Icon name="place" />
-          <Text numberOfLines={1} className="w-32">
-            {item.attributes.formatted_address}
-          </Text>
+      <ListItem.Content className="flex flex-row justify-between">
+        <View className="flex flex-row items-center gap-2">
+          <View className="bg-gray-200 rounded-full p-2">
+            <Icon name="delivery-dining" type="materialicons" size={28} />
+          </View>
+          <View className="">
+            <Text numberOfLines={1} className="w-52">
+              {item.attributes.formatted_address}
+            </Text>
+            <View className="flex flex-row items-center">
+              <Icon name={orderStatus === 'Completed' ? 'check' :  "clock"} 
+              type="feather" size={12} 
+              color={orderStatus === 'Completed' ? 'green' : 'gray'} />
+              <Text className={"text-xs text-green-500"}> {orderStatus} </Text>
+            </View>
+          </View>
         </View>
-        <View className="flex flex-row items-center">
-          <Text className="bg-emerald-500 text-white px-4 py-2 rounded-md">
-            {item.attributes.status.status_name}
-          </Text>
-          <Icon type="entypo" name="dots-three-vertical" />
+
+        <View className="">
+          <Text> {findTotal(item)} &pound; </Text>
         </View>
-      </View>
-      <View>
+
+        {/* <View>
         <Text>
           {item.attributes.first_name} {item.attributes.last_name}{" "}
         </Text>
       </View>
-      <View className="h-[1px] bg-gray-400/50 rounded-md" />
+      
       <View>
         <Text className="font-bold"> Orders </Text>
       </View>
@@ -155,7 +213,8 @@ export default function OrderCard({
         <Button color={"secondary"} onPress={updateStatus} loading={isFetching}>
           {DELIVERY_STATUS[item.attributes.status_id + 1]}
         </Button>
-      )}
-    </TouchableOpacity>
+      )} */}
+      </ListItem.Content>
+    </ListItem.Swipeable>
   );
 }

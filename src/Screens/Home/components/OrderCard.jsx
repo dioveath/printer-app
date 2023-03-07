@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Icon, Button, ListItem, LinearProgress } from "@rneui/themed";
 import { TouchableOpacity } from "react-native";
 import { useUpdateOrderMutation } from "../../../Redux/orders/ordersApiSlice";
@@ -17,6 +17,15 @@ const DELIVERY_STATUS = [
   "Completed",
 ];
 
+const ICONS = {
+  "Received": <Icon name="receipt" type='material-community' size={12} color={"lightblue"} />,
+  "Pending": <Icon name="clock" type='material-community' size={12} color={"orange"} />,
+  "Preparation": <Icon name="chef-hat" type='material-community' size={12} color={"green"} />,
+  "Delivery": <Icon name="truck-delivery" type='material-community' size={12} color={"blue"} />,
+  "Completed": <Icon name="check" type='material-community' size={12} color={"green"} />,
+  "Missed": <Icon name="call-missed" type='material-community' size={12} color={"red"} />,
+};
+
 export default function OrderCard({
   item,
   onPress,
@@ -25,6 +34,14 @@ export default function OrderCard({
 }) {
   const { device: isConnected } = useSelector((state) => state.printer);
   const [updateOrder, { isLoading: isFetching }] = useUpdateOrderMutation();
+
+  
+  const isMissed = useMemo(() => {
+    const orderDate = new Date(item.attributes.order_date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return orderDate.getTime() < today.getTime();
+  }, [])
 
   const updateStatus = () => {
     console.log("Updating order status...");
@@ -145,7 +162,7 @@ export default function OrderCard({
       className={`${backgroundColor} text-black border-b-[1px] border-gray-100`}
       rightContent={(reset) => {
         return (
-          <TouchableOpacity onPress={printReceipt}>
+          <TouchableOpacity onPress={() => { reset(); printReceipt(); }}>
           <View
             className={
               `w-full h-full flex flex-row items-center justify-center ${isConnected ? "bg-orange-500" : "bg-gray-400"}`
@@ -163,7 +180,11 @@ export default function OrderCard({
       }}
       leftContent={(reset) => {
         return (
-          <TouchableOpacity onPress={orderStatus === 'Completed' ? () => {} : updateStatus} disabled={!(orderStatus !== 'Completed')}>
+          <TouchableOpacity onPress={() => {
+            reset();
+            if(orderStatus === 'Completed') return;
+            updateStatus();
+          }} disabled={!(orderStatus !== 'Completed')}>
           <View onPress={() => { console.log("fdsaadsf"); }}
           className={`w-full h-full flex flex-row items-center justify-center 
           ${orderStatus === 'Completed' ? 'bg-green-500' : 'bg-orange-500'}`}>
@@ -187,10 +208,11 @@ export default function OrderCard({
               {item.attributes.formatted_address}
             </Text>
             <View className="flex flex-row items-center">
-              <Icon name={orderStatus === 'Completed' ? 'check' :  "clock"} 
+              {/* <Icon name={orderStatus === 'Completed' ? 'check' :  "clock"} 
               type="feather" size={12} 
-              color={orderStatus === 'Completed' ? 'green' : 'gray'} />
-              <Text className={"text-xs text-green-500"}> {orderStatus} </Text>
+              color={orderStatus === 'Completed' ? 'green' : 'gray'} /> */}
+              { isMissed ? ICONS['Missed'] : ICONS[orderStatus] }
+              <Text className={"text-xs " + (isMissed ? "text-red-500" : "text-gray-800")}> {isMissed ? "Missed" : orderStatus} </Text>
             </View>
           </View>
         </View>

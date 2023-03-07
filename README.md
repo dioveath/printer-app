@@ -9,4 +9,7 @@
 - Print the order receipt (done)
 - Create customizable printer receipt system 
 - Setting up domain on initial screen (done)
-- Status for showcasing if the app is connected to internet and printer
+- Status for showcasing if the app is connected to internet and printer (done)
+- Sort the orders according to ordered time (done)
+- Implement persistency in printer settings
+- Add Order details page

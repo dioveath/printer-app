@@ -1,16 +1,19 @@
+import { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Icon } from "@rneui/base";
-import HomeScreen from "../Home";
-import OptionScreen from "../Options";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import AddPrinter from "../Options/AddPrinter";
-import { useEffect } from "react";
+import { Icon } from "@rneui/base";
 
 import { bleManager } from '../../lib/bleManager';
 import { useDispatch } from "react-redux";
-import { setBTError, setBTStatus, setBTPending } from "../../Redux/connectivity/bluetoothSlice";
+import { setBTStatus } from "../../Redux/connectivity/bluetoothSlice";
 import { setPrinter } from "../../Redux/connectivity/printerSlice";
+
+import HomeScreen from "../Home";
+import OrderPage from "../Home/OrderPage";
+import OptionScreen from "../Options";
+import AddPrinter from "../Options/AddPrinter";
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -24,6 +27,7 @@ const StackNavigator = () => {
     >
       <Stack.Screen name="Dashboard" component={DashboardNavigator} />
       <Stack.Screen name="AddPrinter" component={AddPrinter} />
+      <Stack.Screen name="OrderPage" component={OrderPage} />
     </Stack.Navigator>
   );
 };

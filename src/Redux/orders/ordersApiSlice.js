@@ -4,27 +4,15 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     listOrders: builder.query({
-      // providesTags: (result) => {
-      //   console.log(result);
-      //   return result
-      //   ? [
-      //       ...result.data.map((order) => ({ type: "Orders", id: order.id })),
-      //       { type: "Orders", id: "LIST" }
-      //     ]
-      //   : [{ type: "Orders", id: "LIST" }];
-      // },
       providesTags: (result) => ["Orders"],
       query: () => `/api/orders`,
       method: "GET",
+      transformResponse: (response) => {
+        response.data.sort((a, b) => { return b.id - a.id });
+        return response;
+      },
     }),
     getOrder: builder.query({
-      // providesTags: (result) =>
-      //   result
-      //     ? [
-      //         ...{ type: "Orders", id: result.data.id },
-      //         [{ type: "Orders", id: "LIST" }],
-      //       ]
-      //     : [{ type: "Orders", id: "LIST" }],
       providesTags: (result) => ["Orders"],
       query: ({ id }) => ({
         url: `/api/orders/${id}`,
@@ -32,13 +20,6 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     updateOrder: builder.mutation({
-      // invalidatesTags: (result) =>
-      //   result
-      //     ? [
-      //         ...{ type: "Orders", id: result.data.id },
-      //         { type: "Orders", id: "LIST" },
-      //       ]
-      //     : [{ type: "Orders", id: "LIST" }],
       invalidatesTags: (result) => ["Orders"],
       query: ({ id, ...details }) => ({
         url: `/api/orders/${id}`,

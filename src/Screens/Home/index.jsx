@@ -1,8 +1,8 @@
 import { View, Text, Button } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import CompletedOrders from "./CompletedOrders";
-import PendingOrders from "./PendingOrders";
+import AllOrders from "./AllOrders";
+import ActiveOrders from "./ActiveOrders";
 import { Icon } from "@rneui/base";
 import { useNetInfo } from "@react-native-community/netinfo";
 
@@ -25,14 +25,14 @@ export default function HomeScreen({ navigation }) {
       swipeEnabled: false,
     }}>
       <Tab.Screen
-        name="Pending Orders"
-        component={PendingOrders}
-        options={{ tabBarLabel: "Pending Orders" }}
+        name="Active Orders"
+        component={ActiveOrders}
+        options={{ tabBarLabel: "Active Orders" }}
       />
       <Tab.Screen
-        name="Completed Orders"
-        component={CompletedOrders}
-        options={{ tabBarLabel: "Completed Orders" }}
+        name="All Orders"
+        component={AllOrders}
+        options={{ tabBarLabel: "All Orders" }}
       />
     </Tab.Navigator>
     </>    

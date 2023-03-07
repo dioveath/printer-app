@@ -1,25 +1,23 @@
-import { View, Text } from "react-native";
 import { useState } from "react";
-import { TouchableOpacity } from "react-native";
 import { FlatList } from "react-native";
 import OrderCard from "./components/OrderCard";
 import { useListOrdersQuery } from "../../Redux/orders/ordersApiSlice";
 import { LinearProgress } from "@rneui/themed";
 
-const PendingOrders = () => {
+const AllOrders = () => {
   const [selectedId, setSelectedId] = useState();
   const { data, isLoading, isFetching, refetch } = useListOrdersQuery();
 
   const renderItem = ({ item }) => {
-    if (item.attributes.status.status_name === "Completed") return;
+    // if (item.attributes.status.status_name !== "Completed") return;
     const backgroundColor =
-      item.id === selectedId ? "bg-red-500" : "bg-gray-300";
+      item.id === selectedId ? "bg-gray-500" : "bg-white";
     const textColor = item.id === selectedId ? "text-white" : "text-black";
 
     return (
       <OrderCard
         item={item}
-        onPress={() => setSelectedId(item.id)}
+        // onPress={() => setSelectedId(item.id)}
         backgroundColor={backgroundColor}
         textColor={textColor}
       />
@@ -43,4 +41,4 @@ const PendingOrders = () => {
   );
 };
 
-export default PendingOrders;
+export default AllOrders;

@@ -32,10 +32,12 @@ export default function OrderCard({
   backgroundColor,
   textColor,
 }) {
-  const { device: isConnected } = useSelector((state) => state.printer);
+  const { device, status } = useSelector((state) => state.printer);
+  const { isEnabled: enabled } = useSelector((state) => state.bluetooth);
+  const isConnected = (device && enabled && status.connection === 'CONNECT');
+  
   const [updateOrder, { isLoading: isFetching }] = useUpdateOrderMutation();
 
-  
   const isMissed = useMemo(() => {
     const orderDate = new Date(item.attributes.order_date);
     const today = new Date();

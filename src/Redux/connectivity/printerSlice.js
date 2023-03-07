@@ -18,7 +18,7 @@ const printerSlice = createSlice({
             state.isPending = false;
             state.error = null;
         },
-        setStatus: (state, action) => {
+        setPrinterStatus: (state, action) => {
             state.status = action.payload.status;
         },
         setPrinterPending: (state, _action) => {
@@ -32,5 +32,5 @@ const printerSlice = createSlice({
     }
 });
 
-export const { setPrinter, setPrinterPending, setPrinterError } = printerSlice.actions;
+export const { setPrinter, setPrinterStatus, setPrinterPending, setPrinterError } = printerSlice.actions;
 export default printerSlice.reducer;

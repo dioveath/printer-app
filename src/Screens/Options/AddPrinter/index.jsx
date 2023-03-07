@@ -26,9 +26,9 @@ export default function AddPrinter({ navigation }) {
           TM-U330
         </Text>
       </ScrollView>
-      <View className="w-full absolute bottom-0 p-4">
+      {/* <View className="w-full absolute bottom-0 p-4">
         <Button className=""> Add Printer</Button>
-      </View>
+      </View> */}
     </>
   );
 }

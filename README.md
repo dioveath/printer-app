@@ -13,3 +13,4 @@
 - Sort the orders according to ordered time (done)
 - Implement persistency in printer settings
 - Add Order details page
+- Reimplement and upgrade to new UIs

@@ -16,10 +16,7 @@ const theme = createTheme({
 });
 
 
-const listener = (status) => {
-  console.info(status.connection, status.online, status.paper);
-};
-EscPosPrinter.addPrinterStatusListener(listener);
+
 
 export default function App() {
   return (

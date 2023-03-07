@@ -9,16 +9,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../Redux/auth/authSlice";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import { setBTError, setBTStatus, setBTPending } from "../../Redux/connectivity/bluetoothSlice";
-import { setPrinter, setPrinterError, setPrinterPending } from "../../Redux/connectivity/printerSlice";
+import { setPrinter, setPrinterError, setPrinterPending, setPrinterStatus } from "../../Redux/connectivity/printerSlice";
 import { bleManager } from '../../lib/bleManager';
 
 export default function OptionScreen({ navigation }) {
   const dispatch = useDispatch();
   const { isEnabled: enabled, isPending } = useSelector((state) => state.bluetooth);
-  const connectedPrinter = useSelector((state) => state.printer.device);
+  const { device: connectedPrinter, status } = useSelector((state) => state.printer);
   const { removeItem } = useAsyncStorage("credentials");
+  const { setItem: savePrinter } = useAsyncStorage("printer");
   const [found, setFound] = useState([]);
   const [scanning, setScanning] = useState(false);
+  
+  const canPrint = enabled && connectedPrinter && status?.connection === "CONNECT";
   
   const toggleBluetooth = async (value) => {
     try {
@@ -32,7 +35,6 @@ export default function OptionScreen({ navigation }) {
     }
   };
 
-  
   const scanDevices = async () => {
     try {
       setScanning(true);      
@@ -43,24 +45,6 @@ export default function OptionScreen({ navigation }) {
       console.log("Error: " + JSON.stringify(err));
     } finally { setScanning(false); }
   };
-
-
-  useEffect(() => {
-    try { 
-      EscPosPrinter.startMonitorPrinter(30)
-        .then(() => console.log("Started monitoring printer status"))
-        .catch((e) => { console.log("Error: Couldn't start monitoring", e) });
-    } catch(e){
-      console.log("Error: Something wrong!", e);
-    }
-    
-    return () => {
-      console.log("Unmounting");
-      EscPosPrinter.stopMonitorPrinter()
-        .then(() => console.log("Stopped monitoring printer status!"))
-        .catch(e => console.log("Error: Can't stop moniter", e));
-    };
-  }, [!!connectedPrinter]);
 
   return (
     <ScrollView className="flex-1">
@@ -76,18 +60,16 @@ export default function OptionScreen({ navigation }) {
       </View>      
       
       <View className="h-[1px] bg-gray-300"/>
-
       <View className="my-4 px-4">
         <Button
           className="py-2 rounded-md"
           onPress={scanDevices}
-          // disabled={!!connectedPrinter}
           loading={scanning}          
         >
           Scan Devices
         </Button>
         <Button
-          disabled={!connectedPrinter}
+          disabled={!canPrint}
           onPress={async () => {
             try {
               const printing = new EscPosPrinter.printing();
@@ -122,6 +104,7 @@ export default function OptionScreen({ navigation }) {
           <Text className="text-lg font-bold"> Connected Printer </Text>
           <Text className="text-gray-700"> {connectedPrinter.name} </Text>
           <Text className="text-gray-700"> {connectedPrinter.bt} </Text>
+          {/* <Button type="error"> Remove </Button> */}
         </View>
       )}
 
@@ -132,7 +115,7 @@ export default function OptionScreen({ navigation }) {
           <>
             <Icon type="antdesign" name="printer" size={30} />
             <ListItem.Content>
-              <ListItem.Title> Scanned Printers </ListItem.Title>
+              <ListItem.Title> Scanned/Paired Printers </ListItem.Title>
             </ListItem.Content>
           </>
         }
@@ -145,21 +128,12 @@ export default function OptionScreen({ navigation }) {
               key={d.bt}
               onPress={async () => {
                 try {
-                  console.log("Connecting to: " + d.bt);
+                  console.log("Selecting: " + d.bt);
                   dispatch(setPrinterPending());
-                  EscPosPrinter.init({ 
-                    target: d.target,
-                    seriesName: getPrinterSeriesByName(d.name),
-                    language: "EPOS2_LANG_EN"
-                  }).then((status) => {
-                    console.log(status);
-                    dispatch(setPrinter({ device: d }));
-                  }).catch((e) => {
-                    console.log("Init failed: " + e.message);
-                    dispatch(setPrinterError({ error: e.message }));
-                  });
+                  await savePrinter(JSON.stringify(d));                  
+                  dispatch(setPrinter({ device: d }));
                 } catch (e) {
-                  console.log("Error: " + e.message);                  
+                  console.log("Error: " + e.message);
                   dispatch(setPrinterError({ error: e.message }));
                 }
               }}
@@ -178,7 +152,6 @@ export default function OptionScreen({ navigation }) {
         <Button className="w-full flex-1 mx-4 my-2" color={'error'} onPress={async () => {
           console.log('Logout');
           await removeItem();
-          // dispatch()
           dispatch(logout());
         }}> Logout </Button>
 

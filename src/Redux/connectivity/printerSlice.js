@@ -14,12 +14,12 @@ const printerSlice = createSlice({
     initialState: generateInitialState(),
     reducers: {
         setPrinter: (state, action) => {
-            state.device = action.payload.device;
+            state.device = action.payload;
             state.isPending = false;
             state.error = null;
         },
         setPrinterStatus: (state, action) => {
-            state.status = action.payload.status;
+            state.status = action.payload;
         },
         setPrinterPending: (state, _action) => {
             state.isPending = true;

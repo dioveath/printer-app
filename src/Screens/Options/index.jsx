@@ -12,10 +12,13 @@ import { setBTError, setBTStatus, setBTPending } from "../../Redux/connectivity/
 import { setPrinter, setPrinterError, setPrinterPending, setPrinterStatus } from "../../Redux/connectivity/printerSlice";
 import { bleManager } from '../../lib/bleManager';
 
+
+
 export default function OptionScreen({ navigation }) {
   const dispatch = useDispatch();
   const { isEnabled: enabled, isPending } = useSelector((state) => state.bluetooth);
   const { device: connectedPrinter, status } = useSelector((state) => state.printer);
+  const printer = useSelector((state) => state.printer);
   const { removeItem } = useAsyncStorage("credentials");
   const { setItem: savePrinter } = useAsyncStorage("printer");
   const [found, setFound] = useState([]);
@@ -27,8 +30,7 @@ export default function OptionScreen({ navigation }) {
     try {
       dispatch(setBTPending());
       if (value) await bleManager.enable("transactionId");
-      else await bleManager.disable("transactionId");      
-      dispatch(setBTStatus({ isEnabled: value }));
+      else await bleManager.disable("transactionId");
     } catch (err) {
       console.log("Error: " + JSON.stringify(err));
       dispatch(setBTError({ error: err }));
@@ -48,7 +50,11 @@ export default function OptionScreen({ navigation }) {
 
   return (
     <ScrollView className="flex-1">
-      <Text className="text-2xl font-bold p-6"> Your Printers </Text>
+      <View className="p-6 py-10">
+        <Text className="text-2xl font-bold"> Settings </Text>
+      </View>
+      
+
 
       <View className="flex flex-row justify-between items-center my-4 px-6">
         <Text className="text-lg"> Bluetooth </Text>
@@ -64,6 +70,7 @@ export default function OptionScreen({ navigation }) {
         <Button
           className="py-2 rounded-md"
           onPress={scanDevices}
+          disabled={!enabled}
           loading={scanning}          
         >
           Scan Devices
@@ -100,12 +107,31 @@ export default function OptionScreen({ navigation }) {
       <View className="h-[1px] bg-gray-300 mb-4"/>
 
       { connectedPrinter && (
-        <View className="my-4 px-4">
+        <>
+        <View className="my-2 px-4">
           <Text className="text-lg font-bold"> Connected Printer </Text>
-          <Text className="text-gray-700"> {connectedPrinter.name} </Text>
+          <Text className="text-gray-700"> {connectedPrinter.name} 
+            <View className={`ml-2 h-3 w-3 rounded-full ${canPrint ? 'bg-green-500' : 'border-[1px] border-green-500'}`}/>
+          </Text>
           <Text className="text-gray-700"> {connectedPrinter.bt} </Text>
-          {/* <Button type="error"> Remove </Button> */}
         </View>
+
+        <View className='flex flex-row pb-4'>
+        <View className="px-4">
+          <Text className="text-lg font-bold"> Connection </Text>
+          <Text className="text-gray-700"> {status?.connection} </Text>
+        </View>
+        <View className="px-4">
+          <Text className="text-lg font-bold"> State </Text>
+          <Text className="text-gray-700"> {status?.online} </Text>
+        </View>        
+        <View className="px-4">
+          <Text className="text-lg font-bold"> Paper </Text>
+          <Text className="text-gray-700"> {status?.paper} </Text>
+        </View>                
+        </View>
+
+        </>        
       )}
 
 

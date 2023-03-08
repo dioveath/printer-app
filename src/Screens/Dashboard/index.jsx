@@ -10,7 +10,7 @@ import EscPosPrinter, {
 } from "react-native-esc-pos-printer";
 import { useDispatch, useSelector } from "react-redux";
 import { setBTStatus } from "../../Redux/connectivity/bluetoothSlice";
-import { setPrinterStatus } from "../../Redux/connectivity/printerSlice";
+import { setPrinterStatus, setPrinter } from "../../Redux/connectivity/printerSlice";
 
 import HomeScreen from "../Home";
 import OrderPage from "../Home/OrderPage";
@@ -76,21 +76,12 @@ export default function Dashboard() {
         dispatch(setBTStatus({ isEnabled: false }));
       }
     }, true);
-
     return () => subscription.remove();
   }, []);
 
-  useEffect(() => {
-    getItem().then((device) => {
-      console.log("Found " + device);
-      if (device) {
-        dispatch(setPrinter(device));
-      }
-    });
-  }, []);
 
   useEffect(() => {
-    if (device === null) return;
+    if (!device) return;
 
     EscPosPrinter.init({
       target: device.target,
@@ -107,7 +98,7 @@ export default function Dashboard() {
 
     const listener = (status) => {
       console.info(status.connection, status.online, status.paper);
-      dispatch(setPrinterStatus(status));
+      if(status) dispatch(setPrinterStatus(status));
     };
     const removeListener = EscPosPrinter.addPrinterStatusListener(listener);
 
@@ -123,13 +114,13 @@ export default function Dashboard() {
     
     return () => {
       console.log("Unmounting");
-      dispatch(setPrinterStatus(null));
+      dispatch(setPrinterStatus());
       removeListener();
       EscPosPrinter.stopMonitorPrinter()
         .then(() => console.log("Stopped monitoring printer status!"))
         .catch((e) => console.log("Error: Can't stop moniter", e));
     };
-  }, [!!device]);
+  }, [device]);
 
   return (
     <NavigationContainer>

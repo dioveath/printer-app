@@ -34,7 +34,7 @@ export default function OrderCard({
 }) {
   const { device, status } = useSelector((state) => state.printer);
   const { isEnabled: enabled } = useSelector((state) => state.bluetooth);
-  const isConnected = (device && enabled && status.connection === 'CONNECT');
+  const isConnected = (device && enabled && status?.connection === 'CONNECT');
   
   const [updateOrder, { isLoading: isFetching }] = useUpdateOrderMutation();
 
@@ -183,7 +183,7 @@ export default function OrderCard({
       leftContent={(reset) => {
         return (
           <TouchableOpacity onPress={() => {
-            reset();
+            if(isMissed) { reset(); return; }
             if(orderStatus === 'Completed') return;
             updateStatus();
           }} disabled={!(orderStatus !== 'Completed')}>

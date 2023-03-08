@@ -153,7 +153,7 @@ export default function OrderCard({
     const total = item.attributes.order_totals.find(
       (o) => o.title === "Order Total"
     );
-    return total?.value && parseFloat(total.value);
+    return total?.value && parseFloat(total.value).toFixed(2);
   };
 
   const orderStatus = DELIVERY_STATUS[item.attributes.status_id];
@@ -200,44 +200,24 @@ export default function OrderCard({
         )
       }}
     >
-      <ListItem.Content className="flex flex-row justify-between">
-        <View className="flex flex-row items-center gap-2">
-          <View className="bg-gray-200 rounded-full p-2">
-            <Icon name="delivery-dining" type="materialicons" size={28} />
-          </View>
-          <View className="">
+      <ListItem.Content className="w-full flex flex-row justify-between">
+        <View className="w-full flex flex-row items-center justify-between gap-2">
+          <View className='flex flex-col'>
+            <Text className='text-orange-500'> <Text className='text-black'>#{item.id}</Text>  Order </Text>
             <Text numberOfLines={1} className="w-52">
-              {item.attributes.formatted_address}
-            </Text>
-            <View className="flex flex-row items-center">
-              {/* <Icon name={orderStatus === 'Completed' ? 'check' :  "clock"} 
-              type="feather" size={12} 
-              color={orderStatus === 'Completed' ? 'green' : 'gray'} /> */}
+                {item.attributes.formatted_address}
+            </Text>          
+          </View>
+          
+          <View className="flex flex-col items-end gap-1">
+            <Text className="text-gray-700"> {findTotal(item)} &pound; </Text>            
+            <View className="flex flex-row items-center border-[1px] border-orange-500 rounded-full px-4 py-1">
               { isMissed ? ICONS['Missed'] : ICONS[orderStatus] }
               <Text className={"text-xs " + (isMissed ? "text-red-500" : "text-gray-800")}> {isMissed ? "Missed" : orderStatus} </Text>
             </View>
           </View>
         </View>
 
-        <View className="">
-          <Text> {findTotal(item)} &pound; </Text>
-        </View>
-
-        {/* <View>
-        <Text>
-          {item.attributes.first_name} {item.attributes.last_name}{" "}
-        </Text>
-      </View>
-      
-      <View>
-        <Text className="font-bold"> Orders </Text>
-      </View>
-      <Button onPress={printReceipt}> Print Receipt </Button>
-      {item.attributes.status_id !== 5 && (
-        <Button color={"secondary"} onPress={updateStatus} loading={isFetching}>
-          {DELIVERY_STATUS[item.attributes.status_id + 1]}
-        </Button>
-      )} */}
       </ListItem.Content>
     </ListItem.Swipeable>
   );

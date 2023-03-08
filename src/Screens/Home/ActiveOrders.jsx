@@ -16,10 +16,12 @@ const ActiveOrders = ({ navigation }) => {
       item.id === selectedId ? "bg-red-500" : "bg-gray-300";
     const textColor = item.id === selectedId ? "text-white" : "text-black";
 
+    console.log(item);
+
     return (
       <OrderCard
         item={item}
-        onPress={() => navigation.navigate("OrderPage", { item }) }
+        onPress={() => navigation.navigate("OrderPage", { item })}
         backgroundColor={backgroundColor}
         textColor={textColor}
       />

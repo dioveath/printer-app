@@ -4,7 +4,7 @@ import OrderCard from "./components/OrderCard";
 import { useListOrdersQuery } from "../../Redux/orders/ordersApiSlice";
 import { LinearProgress } from "@rneui/themed";
 
-const AllOrders = () => {
+const AllOrders = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState();
   const { data, isLoading, isFetching, refetch } = useListOrdersQuery();
 
@@ -17,7 +17,7 @@ const AllOrders = () => {
     return (
       <OrderCard
         item={item}
-        // onPress={() => setSelectedId(item.id)}
+        onPress={() => navigation.navigate("OrderPage", { item }) }
         backgroundColor={backgroundColor}
         textColor={textColor}
       />

@@ -12,6 +12,7 @@ import { setBTError, setBTStatus, setBTPending } from "../../Redux/connectivity/
 import { setPrinter, setPrinterError, setPrinterPending, setPrinterStatus } from "../../Redux/connectivity/printerSlice";
 import { bleManager } from '../../lib/bleManager';
 
+import { CustomButton } from "../../Components/CustomButton";
 
 
 export default function OptionScreen({ navigation }) {
@@ -49,33 +50,50 @@ export default function OptionScreen({ navigation }) {
   };
 
   return (
-    <ScrollView className="flex-1">
-      <View className="p-6 py-10">
+    <>
+      <View className="p-6 py-10 flex flex-row justify-between items-center">
         <Text className="text-2xl font-bold"> Settings </Text>
-      </View>
-      
+        <CustomButton type='outlined' onPress={async () => {
+          await removeItem();
+          dispatch(logout());          
+        }}> Logout </CustomButton>
+      </View>    
+      <View className="h-[1px] bg-orange-500"/>      
+    <ScrollView className="flex-1">
 
-
-      <View className="flex flex-row justify-between items-center my-4 px-6">
-        <Text className="text-lg"> Bluetooth </Text>
+      <View className="h-[1px] bg-gray-300 mt-4 mb-4"/>      
+      <Text className='font-bold px-6'> Connect thermal printer to this app. </Text>
+      <Text className='text-xs px-6 text-gray-500' numberOfLines={4}> Your orders will be printed automatically after you accept them with this app. </Text>
+      <View className="flex flex-row justify-between items-center my-2 px-6">
+        <Text className="font-bold"> Bluetooth </Text>
         <Switch
           disabled={scanning || isPending}
           value={enabled}
           onValueChange={(value) => toggleBluetooth(value)}
         />
       </View>      
+      <Text className='text-xs px-6 text-gray-500' numberOfLines={4}> Firstly make sure your bluetooth is turned on. </Text>      
+      <View className="h-[1px] bg-gray-300 my-4"/>            
       
-      <View className="h-[1px] bg-gray-300"/>
-      <View className="my-4 px-4">
+      <Text className='font-bold px-6'> Add a printer. </Text>
+      <Text className='text-xs px-6 text-gray-500' numberOfLines={4}> Next, lets scan for your bluetooth printer. </Text>      
+
+      <View className="my-4 px-6">
         <Button
-          className="py-2 rounded-md"
+          color={'#F97316'}
+          size="sm"
+          radius={100}
           onPress={scanDevices}
           disabled={!enabled}
           loading={scanning}          
         >
-          Scan Devices
+          Scan for printers
         </Button>
+        <View className='h-2'/>
         <Button
+         color={'#3B82F6'}
+         size="sm"
+         radius={100}
           disabled={!canPrint}
           onPress={async () => {
             try {
@@ -106,46 +124,13 @@ export default function OptionScreen({ navigation }) {
 
       <View className="h-[1px] bg-gray-300 mb-4"/>
 
-      { connectedPrinter && (
-        <>
-        <View className="my-2 px-4">
-          <Text className="text-lg font-bold"> Connected Printer </Text>
-          <Text className="text-gray-700"> {connectedPrinter.name} 
-            <View className={`ml-2 h-3 w-3 rounded-full ${canPrint ? 'bg-green-500' : 'border-[1px] border-green-500'}`}/>
-          </Text>
-          <Text className="text-gray-700"> {connectedPrinter.bt} </Text>
-        </View>
 
-        <View className='flex flex-row pb-4'>
-        <View className="px-4">
-          <Text className="text-lg font-bold"> Connection </Text>
-          <Text className="text-gray-700"> {status?.connection} </Text>
-        </View>
-        <View className="px-4">
-          <Text className="text-lg font-bold"> State </Text>
-          <Text className="text-gray-700"> {status?.online} </Text>
-        </View>        
-        <View className="px-4">
-          <Text className="text-lg font-bold"> Paper </Text>
-          <Text className="text-gray-700"> {status?.paper} </Text>
-        </View>                
-        </View>
+      <Text className='font-bold px-6'> Found/Scanned Printer </Text>
+      <Text className='text-xs px-6 text-gray-500' numberOfLines={4}> You'll see list of printers that are discoverd and/or paired. </Text>      
+        { found && found.length === 0 && (
+            <Text className='text-xs px-6 py-4 text-gray-500' numberOfLines={4}> No printer found. </Text>
+        )}
 
-        </>        
-      )}
-
-
-      <ListItem.Accordion
-        isExpanded={!scanning}
-        content={
-          <>
-            <Icon type="antdesign" name="printer" size={30} />
-            <ListItem.Content>
-              <ListItem.Title> Scanned/Paired Printers </ListItem.Title>
-            </ListItem.Content>
-          </>
-        }
-      >
         {found.map((d) => {
           if(connectedPrinter && connectedPrinter.bt === d.bt) return;
           return (
@@ -169,18 +154,44 @@ export default function OptionScreen({ navigation }) {
             </ListItem>
           );
         })}
-      </ListItem.Accordion>
+      {/* </ListItem.Accordion> */}
+
+      <Text className='font-bold px-6'> Connected Printer </Text>
+      <Text className='text-xs px-6 text-gray-500' numberOfLines={4}> Your connected printer and its status. You can only print when there is green symbol. </Text>
+      { connectedPrinter && (
+        <>
+        <View className="my-2 px-6">
+          <View className='flex flex-row gap-2 items-center'>
+          <Text className="text-xs text-gray-700"> {connectedPrinter.name} </Text>
+          <View className={`h-2 w-2 rounded-full ${canPrint ? 'bg-green-500' : 'border-[1px] border-green-500'}`}/>                    
+          </View>
+          
+          <Text className="text-xs text-gray-700"> {connectedPrinter.bt} </Text>
+        </View>
+
+        <View className='flex flex-row pb-4'>
+        <View className="px-6">
+          <Text className="font-bold"> Connection </Text>
+          <Text className="text-xs text-gray-700"> {status?.connection} </Text>
+        </View>
+        <View className="px-6">
+          <Text className="font-bold"> State </Text>
+          <Text className="text-xs text-gray-700"> {status?.online} </Text>
+        </View>        
+        <View className="px-6">
+          <Text className="font-bold"> Paper </Text>
+          <Text className="text-xs text-gray-700"> {status?.paper} </Text>
+        </View>                
+        </View>
+
+        </>        
+      )}
 
       <ListItem topDivider bottomDivider onPress={() => navigation.navigate('AddPrinter') }>
         <ListItem.Title> Supported Printers </ListItem.Title>
       </ListItem>
 
-        <Button className="w-full flex-1 mx-4 my-2" color={'error'} onPress={async () => {
-          console.log('Logout');
-          await removeItem();
-          dispatch(logout());
-        }}> Logout </Button>
-
     </ScrollView>
+    </>
   );
 }

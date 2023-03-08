@@ -5,14 +5,17 @@ import { Button, Icon } from "@rneui/themed";
 export default function AddPrinter({ navigation }) {
   return (
     <>
-        <View className="flex flex-row items-center p-4">
+      <View className="p-6 py-10 flex flex-row justify-between items-center">
+        <View className="flex flex-row items-center">
             <Icon type='materialicons' name="arrow-back-ios" size={30} onPress={() => navigation.goBack(null)}/>
             <Text className='text-lg font-bold'> Back </Text>
         </View>
+      </View>
+      <View className="h-[1px] bg-orange-500"/>
       <ScrollView className="relative flex-1 px-4">
-        <Text className="text-lg">Connect a thermal printer to this app.</Text>
-        <Text className="text-lg font-bold">We Support: </Text>
-        <Text className="text-gray-600">
+        <Text className="font-bold">Please check your printer with compatibility list. </Text>
+        <Text className="font-bold py-2">We Support: </Text>
+        <Text className="text-gray-600 py-2">
           EU-m30 ✓ TM-T20X ✓ TM-T60 ✓ TM-H6000IV-DT ✓ TM-T70 ✓ TM-H6000V ✓
           TM-T70-i ✓ TM-L100 ✓ TM-T70II ✓ TM-L90 Liner-Free Label ✓ TM-T70II-DT
           ✓ TM-m10 ✓ TM-T70II-DT2 ✓ TM-m30 ✓ TM-T81II ✓ TM-m30II ✓ TM-T81III ✓

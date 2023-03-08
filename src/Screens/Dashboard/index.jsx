@@ -1,8 +1,9 @@
+import { View, Text } from 'react-native';
 import { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Icon } from "@rneui/base";
+import { Icon, color } from "@rneui/base";
 
 import { bleManager } from "../../lib/bleManager";
 import EscPosPrinter, {
@@ -40,14 +41,21 @@ const DashboardNavigator = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
+        tabBarStyle: { height: 70 },
       }}
     >
       <Tab.Screen
-        name="Home"
+        name="All Orders"
         component={HomeScreen}
         options={{
-          title: "Home",
-          tabBarIcon: ({ color, size }) => <Icon name="home" />,
+          title: "All Orders",
+          tabBarActiveTintColor: "#F97316",
+          tabBarIcon: ({ color, size }) => <Icon name="receipt-outline" type='ionicon' color={color}/>,
+          tabBarLabel: ({focused, color, position, children}) => {
+            return <View className='mb-4'>
+              <Text style={{color: color }} className={``}> All Orders </Text>
+            </View>
+          },
         }}
       />
       <Tab.Screen
@@ -55,7 +63,13 @@ const DashboardNavigator = () => {
         component={OptionScreen}
         options={{
           title: "Options",
-          tabBarIcon: ({ color, size }) => <Icon name="settings" />,
+          tabBarActiveTintColor: "#F97316",
+          tabBarIcon: ({ color, size }) => <Icon name="settings" color={color}/>,
+          tabBarLabel: ({focused, color, position, children}) => {
+            return <View className='mb-4'>
+              <Text style={{color: color }} className={``}> Settings </Text>
+            </View>
+          },          
         }}
       />
     </Tab.Navigator>
@@ -114,8 +128,8 @@ export default function Dashboard() {
     
     return () => {
       console.log("Unmounting");
+      removeListener();      
       dispatch(setPrinterStatus());
-      removeListener();
       EscPosPrinter.stopMonitorPrinter()
         .then(() => console.log("Stopped monitoring printer status!"))
         .catch((e) => console.log("Error: Can't stop moniter", e));

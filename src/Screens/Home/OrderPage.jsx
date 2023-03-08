@@ -1,9 +1,52 @@
 import { View, Text, ScrollView } from "react-native";
-import React from "react";
-import { Icon, Button } from "@rneui/themed";
+import React, { useMemo } from "react";
+import { Icon, Button, LinearProgress } from "@rneui/themed";
+import { useGetOrderQuery, useUpdateOrderMutation } from "../../Redux/orders/ordersApiSlice";
 
 export default function OrderPage({ navigation, route }) {
-  const { item } = route.params;
+  const { item: propsItem } = route.params;;
+  const { data: item, isLoading, isFetching: isOrderFetching, isError, error } = useGetOrderQuery({ id: propsItem.id });
+  const [updateOrder, { isLoading: isFetching }] = useUpdateOrderMutation();
+
+  const canUpdate = item?.attributes.status_id < 5;  
+  const canRevert = item?.attributes.status_id > 1;
+
+  const isMissed = useMemo(() => {
+    if(!item) return;
+    const orderDate = new Date(item.attributes.order_date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return orderDate.getTime() < today.getTime();
+  }, [])
+
+  const updateStatus = () => {
+    console.log("Updating order status...");
+    if(!item) return;
+    if(!canUpdate) return;
+    updateOrder({ id: item.id, status_id: item.attributes.status_id + 1 });
+  };
+
+  const revertStatus = () => {
+    console.log("Reverting order status...");
+    if(!item) return;
+    if(!canRevert) return;
+    updateOrder({ id: item.id, status_id: item.attributes.status_id - 1 });
+  };
+
+  if(isLoading || !item) {
+    return (
+      <View className="flex-1 flex flex-col justify-center items-center">
+        <Text>Loading...</Text>
+      </View>
+    );    
+  }
+
+  if(isError){
+    <View className="flex-1 flex flex-col justify-center items-center">
+      <Text>{error}</Text>
+    </View>    
+  }
+
   return (
     <View className="flex-1">
       <View className="flex flex-row p-6 items-center gap-2">
@@ -14,9 +57,9 @@ export default function OrderPage({ navigation, route }) {
         <View className="w-full flex flex-row justify-between px-6 py-2">
           <View>
           <Text className='text-orange-500 text-lg'> <Text className='text-black'>#{item.id}</Text>  Order </Text>
-            <Text className="border-2 border-orange-500 px-4 py-[2px] rounded-full">
-              Online Payment
-            </Text>
+            <View className="border-2 border-orange-500 px-4 py-[2px] rounded-full">
+              <Text>{item.attributes.status.status_name}</Text>
+            </View>
           </View>
           <View className='h-10 w-10 border-orange-500 border-2 rounded-full flex flex-col justify-center items-center'>
             <Icon type="material-community" name="printer-outline" size={20} />
@@ -24,9 +67,10 @@ export default function OrderPage({ navigation, route }) {
           
         </View>
         <View className="w-full h-[2px] bg-orange-500" />
+        { (isOrderFetching || isFetching) && <LinearProgress className="w-full" variant="indeterminate"/> }
         <View className="w-full flex flex-row justify-between py-2 px-6">
-          <Text> Date: {new Date().toLocaleDateString()} </Text>
-          <Text> Exp. Time: {new Date().toLocaleTimeString()} </Text>
+          <Text> Date: {new Date(item.attributes.order_date).toLocaleDateString()} </Text>
+          <Text> Exp. Time: {item.attributes.order_time} </Text>
         </View>
         <View className="w-full h-[2px] bg-gray-200" />
         <View className="w-full flex flex-row justify-between py-2 px-6">
@@ -96,15 +140,8 @@ export default function OrderPage({ navigation, route }) {
       </ScrollView>
 
       <View className="absolute bottom-0 w-full flex flex-row justify-between px-6 py-10 bg-gray-100">
-        {/* <View className="w-full"> <Text> Revert Order </Text> </View> */}
-        {/* <View className="w-full"> <Text> Forward Order </Text> </View> */}
-        <View className='border-[2px] border-orange-500 px-6 py-2 rounded-full'>
-          <Text className='text-orange-500 font-bold'> Revert Order </Text>
-        </View>
-        <View className='bg-orange-500 px-6 py-2 rounded-full'>
-          <Text className='text-white font-bold'> Forward Order </Text>
-        </View>        
-        
+        <Button color="#f97316" radius={100} onPress={revertStatus} disabled={isFetching || !canRevert}> Revert Order </Button>
+        <Button color="#F97316" radius={100} onPress={updateStatus} disabled={isFetching || !canUpdate}> Forward Order </Button>
       </View>
     </View>
   );

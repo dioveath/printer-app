@@ -18,6 +18,10 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
         url: `/api/orders/${id}`,
         method: "GET",
       }),
+      transformResponse: (response) => { 
+        console.log(response.data?.attributes?.status_id)
+        return response.data;
+       }
     }),
     updateOrder: builder.mutation({
       invalidatesTags: (result) => ["Orders"],

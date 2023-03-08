@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React, { useState } from "react";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
-import { Input, Button } from "@rneui/themed";
+import { Input, Button, Icon } from "@rneui/themed";
 import { Linking } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { initDomain } from "../../Redux/setup/setupSlice";
@@ -51,23 +51,39 @@ export default function Setup() {
     };
 
   return (
-    <View className="flex-1 justify-center items-center">
-      <View className='w-full px-10'>
-        <Text className="text-2xl font-bold text-center my-4"> Enter your domain </Text>
-        <Input placeholder="Domain" value={domain} onChangeText={(val) => { setError(null); setDomain(val); }} />
+    <View className="flex-1 justify-around items-center">
+
+      <View className='w-full px-6 gap-4'>
+        <Text className='text-lg font-bold'>Lets get you up and running </Text>
+        <Text className='text-sm'>We need to know some initial information about your website. To get you started please fill in the information below. </Text>
+      </View>
+      
+      
+      
+      <View className='w-full px-6'>
+        <Text className="text-left mt-2">Enter your website address below: </Text>
+        <Input inputStyle={{ fontSize: 14 }} placeholder="e.g. https://www.yourwebsite.co.uk" value={domain} onChangeText={(val) => { setError(null); setDomain(val); }} />        
         {error && <Text className="text-red-500 text-xs text-center">{error}</Text> }
-        <Button onPress={onSetup} loading={loading}>
-          Setup
+        <Button color={'#F97316'} onPress={onSetup} loading={loading} radius={100}>
+
+        <View className='flex flex-row items-center justify-center'>
+          <Text className='font-bold text-white'>Next step </Text>
+          <Icon type='material-community' name='location-exit' color={'white'} size={20}/>
+        </View>          
+  
         </Button>
 
         <View className='flex flex-row py-2'>
-            <Text> Register with us directly from </Text>
+            <Text>Register with us directly from </Text>
             <Text onPress={() => {
                 Linking.openURL('https://tastyigniter.com/marketplace');
-            }} className='text-blue-500'>Igniter Marketplace </Text>
+            }} className='text-orange-500'>Igniter Marketplace </Text>
         </View>
-
       </View>
+
+      <Text>By clicking Next, you agree to our <Text className='text-orange-500' onPress={() => {}}> Terms of Services </Text>, 
+          <Text className='text-orange-500' onPress={() => {}}> Community guidelines </Text> and have read <Text className='text-orange-500' onPress={() => {}}> Privacy Policy</Text>.
+        </Text>      
     </View>
   );
 }

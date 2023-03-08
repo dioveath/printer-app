@@ -66,8 +66,8 @@ export default function Setup() {
         {error && <Text className="text-red-500 text-xs text-center">{error}</Text> }
         <Button color={'#F97316'} onPress={onSetup} loading={loading} radius={100}>
 
-        <View className='flex flex-row items-center justify-center'>
-          <Text className='font-bold text-white'>Next step </Text>
+        <View className='flex flex-row items-center justify-center gap-2'>
+          <Text className='font-bold text-white'>Next step</Text>
           <Icon type='material-community' name='location-exit' color={'white'} size={20}/>
         </View>          
   

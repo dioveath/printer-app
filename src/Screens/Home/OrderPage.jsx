@@ -107,7 +107,7 @@ export default function OrderPage({ navigation, route }) {
                   {`${menu.quantity} x ${menu.name}`}
                 </Text>
                 <Text className="font-nebula-semibold">
-                  {parseFloat(menu.price).toFixed(2)} &pound;{" "}
+                  {parseFloat(menu.price).toFixed(2)} &pound;
                 </Text>
               </View>
               {menu.menu_options.map((option, index) => {
@@ -120,7 +120,7 @@ export default function OrderPage({ navigation, route }) {
                       {`+ ${option.quantity} x ${option.order_option_name}`}
                     </Text>
                     <Text className="font-nebula text-gray-700 pl-4">
-                      &pound; {parseFloat(option.order_option_price).toFixed(2)}
+                      {parseFloat(option.order_option_price).toFixed(2)} &pound;
                     </Text>
                   </View>
                 );

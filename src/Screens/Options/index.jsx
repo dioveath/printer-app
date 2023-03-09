@@ -127,7 +127,7 @@ export default function OptionScreen({ navigation }) {
       <View className="h-[1px] bg-gray-300 mb-4"/>
 
       <Text className='font-nebula-semibold px-6'>Found/Scanned Printer </Text>
-      <Text className='font-nebula text-xs px-6 text-gray-500' numberOfLines={4}>You'll see list of printers that are discoverd and/or paired. </Text>      
+      <Text className='font-nebula text-xs px-6 my-2 text-gray-500' numberOfLines={4}>You'll see list of printers that are discoverd and/or paired. </Text>      
         { found && found.length === 0 && (
             <Text className='font-nebula text-xs px-6 py-4 text-gray-500' numberOfLines={4}>No printer found. </Text>
         )}
@@ -142,8 +142,8 @@ export default function OptionScreen({ navigation }) {
                 try {
                   console.log("Selecting: " + d.bt);
                   dispatch(setPrinterPending());
-                  await savePrinter(JSON.stringify(d));                  
-                  dispatch(setPrinter({ device: d }));
+                  await savePrinter(JSON.stringify(d));
+                  dispatch(setPrinter(d));
                 } catch (e) {
                   console.log("Error: " + e.message);
                   dispatch(setPrinterError({ error: e.message }));

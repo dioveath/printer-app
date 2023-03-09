@@ -212,7 +212,7 @@ export default function OrderCard({
           
           <View className="flex flex-col items-end gap-1">
             <Text className="font-nebula-semibold text-gray-700"> {findTotal(item)} &pound; </Text>            
-            <View className="flex flex-row items-center border-[1px] border-orange-500 rounded-full px-4 py-1">
+            <View className="flex flex-row items-center border-[1px] border-orange-500 rounded-full px-2 py-1">
               { isMissed ? ICONS['Missed'] : ICONS[orderStatus] }
               <Text className={"font-nebula text-xs " + (isMissed ? "text-red-500" : "text-gray-800")}> {isMissed ? "Missed" : orderStatus} </Text>
             </View>

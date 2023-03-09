@@ -7,7 +7,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
       providesTags: (result) => ["Orders"],
       query: () => `/api/orders`,
       method: "GET",
-      transformResponse: (response) => {
+      transformResponse: (response) => {        
         response.data.sort((a, b) => { return b.id - a.id });
         return response;
       },

@@ -38,7 +38,7 @@ export default function HomeScreen({ navigation }) {
       <Tab.Screen
         name="Active Orders"
         component={ActiveOrders}
-        options={{ tabBarLabel: "Active" }}
+        options={{ tabBarLabel: "In-Progress" }}
       />
       <Tab.Screen
         name="All Orders"

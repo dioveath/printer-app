@@ -6,13 +6,13 @@ export default function AddPrinter({ navigation }) {
   return (
     <>
       <View className="p-6 py-10 flex flex-row justify-between items-center">
-        <View className="flex flex-row items-center">
-            <Icon type='materialicons' name="arrow-back-ios" size={30} onPress={() => navigation.goBack(null)}/>
-            <Text className='text-lg font-bold'> Back </Text>
+        <View className="flex flex-row items-center justify-center">
+          <Icon type='material-community' name='location-exit' style={{transform: [{ rotateY: '180deg'}]}} onPress={() => navigation.goBack()}/>
+          <Text className='text-lg font-bold'> Back </Text>
         </View>
       </View>
       <View className="h-[1px] bg-orange-500"/>
-      <ScrollView className="relative flex-1 px-4">
+      <ScrollView className="relative flex-1 px-6 py-4">
         <Text className="font-bold">Please check your printer with compatibility list. </Text>
         <Text className="font-bold py-2">We Support: </Text>
         <Text className="text-gray-600 py-2">

@@ -187,9 +187,11 @@ export default function OptionScreen({ navigation }) {
         </>        
       )}
 
+      <View className="h-10"/>
       <ListItem topDivider bottomDivider onPress={() => navigation.navigate('AddPrinter') }>
         <ListItem.Title> Supported Printers </ListItem.Title>
       </ListItem>
+      <View className="h-40"/>
 
     </ScrollView>
     </>

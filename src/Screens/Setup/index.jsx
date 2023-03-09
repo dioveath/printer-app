@@ -73,16 +73,16 @@ export default function Setup() {
   
         </Button>
 
-        <View className='flex flex-row py-2'>
+        {/* <View className='flex flex-row py-2'>
             <Text>Register with us directly from </Text>
             <Text onPress={() => {
                 Linking.openURL('https://tastyigniter.com/marketplace');
             }} className='text-orange-500'>Igniter Marketplace </Text>
-        </View>
+        </View> */}
       </View>
 
-      <Text>By clicking Next, you agree to our <Text className='text-orange-500' onPress={() => {}}> Terms of Services </Text>, 
-          <Text className='text-orange-500' onPress={() => {}}> Community guidelines </Text> and have read <Text className='text-orange-500' onPress={() => {}}> Privacy Policy</Text>.
+      <Text className='px-2'>By clicking Next, you agree to our <Text className='text-orange-500' onPress={() => {}}>Terms of Services</Text>, 
+          <Text className='text-orange-500' onPress={() => {}}> Community guidelines </Text>and have read <Text className='text-orange-500' onPress={() => {}}> Privacy Policy</Text>.
         </Text>      
     </View>
   );

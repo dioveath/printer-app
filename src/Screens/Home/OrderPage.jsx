@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import React, { useMemo } from "react";
 import { Icon, Button, LinearProgress } from "@rneui/themed";
 import { useGetOrderQuery, useUpdateOrderMutation } from "../../Redux/orders/ordersApiSlice";
@@ -46,7 +46,7 @@ export default function OrderPage({ navigation, route }) {
   if(isLoading || !item) {
     return (
       <View className="flex-1 flex flex-col justify-center items-center">
-        <Text>Loading...</Text>
+        <ActivityIndicator size="large" color="#F97316" />
       </View>
     );    
   }

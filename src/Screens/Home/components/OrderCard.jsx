@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import React, { useMemo, useState } from "react";
 import { Icon, Button, ListItem, LinearProgress } from "@rneui/themed";
 import { TouchableOpacity } from "react-native";
@@ -191,7 +191,7 @@ export default function OrderCard({
           <View onPress={() => { console.log("fdsaadsf"); }}
           className={`w-full h-full flex flex-row items-center justify-center 
           ${orderStatus === 'Completed' ? 'bg-green-500' : 'bg-orange-500'}`}>
-            { isFetching && <LinearProgress color="secondary" /> }
+            { isFetching && <ActivityIndicator color={'white'}/> }
             { !isFetching && <Icon name={orderStatus === 'Completed' ? 'check' : 'update'} type="material-comunity"
               size={32}
               color={"white"}

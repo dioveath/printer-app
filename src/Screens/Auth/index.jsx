@@ -46,7 +46,7 @@ export default function Auth() {
 
       <View>
         <Text className="text-left text-2xl font-bold px-6">Login</Text>
-        <Text className='px-6'>Enter your login details to start accepting orders. </Text>
+        <Text className='px-6'>Enter your website login details to connect & start accepting orders. </Text>
       </View>
       
 

@@ -2,6 +2,7 @@ import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import React, { useMemo } from "react";
 import { Icon, Button, LinearProgress } from "@rneui/themed";
 import { useGetOrderQuery, useUpdateOrderMutation } from "../../Redux/orders/ordersApiSlice";
+import { CustomProgressIndicator } from "../../Components/CustomProgressIndicator";
 
 const ICONS = {
   "Received": <Icon name="receipt" type='material-community' size={16} color={"lightblue"} />,
@@ -46,7 +47,8 @@ export default function OrderPage({ navigation, route }) {
   if(isLoading || !item) {
     return (
       <View className="flex-1 flex flex-col justify-center items-center">
-        <ActivityIndicator size="large" color="#F97316" />
+        <CustomProgressIndicator/>
+        <Text className='font-nebula'> Loading order... </Text>
       </View>
     );    
   }

@@ -157,8 +157,10 @@ export default function OptionScreen({ navigation }) {
         })}
       {/* </ListItem.Accordion> */}
 
+      <View className="h-[1px] bg-gray-300 my-4"/>
+
       <Text className='font-nebula-semibold px-6'>Connected Printer </Text>
-      <Text className='font-nebula text-xs px-6 text-gray-500' numberOfLines={4}>Your connected printer and its status. You can only print when there is green symbol. </Text>
+      <Text className='font-nebula text-xs px-6 text-gray-500' numberOfLines={4}>Your connected printer and its status. You can only print when there is green symbol. It might take some seconds to configure everything. </Text>
       { connectedPrinter && (
         <>
         <View className="my-2 px-6">

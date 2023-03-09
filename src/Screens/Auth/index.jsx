@@ -44,22 +44,21 @@ export default function Auth() {
   return (
     <View className="flex-1 justify-around">
 
-      <View>
-        <Text className="text-left text-2xl font-bold px-6">Login</Text>
-        <Text className='px-6'>Enter your website login details to connect & start accepting orders. </Text>
+      <View className='flex flex-col gap-4'>
+        <Text className="font-nebula-bold text-left text-2xl px-6">Login</Text>
+        <Text className='font-nebula px-6'>Enter your website login details to connect & start accepting orders. </Text>
       </View>
-      
 
       <View className="w-full px-6">
-        <Text className=''> Enter your credentials </Text>
+        <Text className='font-nebula'> Enter your credentials </Text>
         <Input
-        inputStyle={{fontSize: 16}}
+        inputStyle={{fontSize: 16, fontFamily: 'BRNebula-Regular'}}
           placeholder="Username"
           value={username}
           onChangeText={setUsername}
         />
         <Input
-        inputStyle={{fontSize: 16}}
+        inputStyle={{fontSize: 16, fontFamily: 'BRNebula-Regular'}}
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
@@ -73,18 +72,18 @@ export default function Auth() {
           }
         ></Input>
         {error && (
-          <Text className="text-xs text-red-500"> {error.data.message} </Text>
+          <Text className="pb-2 font-nebula text-xs text-red-500"> {error.data.message} </Text>
         )}
         <Button onPress={onLoginClick} loading={isLoading} radius={100} color={'#F97316'}>
           <View className='flex flex-row items-center justify-center gap-2'>
-            <Text className='font-bold text-white'>Login</Text>
+            <Text className='font-nebula-bold text-white'>Login</Text>
             <Icon type='material-community' name='location-exit' color={'white'} size={20}/>
           </View>        
         </Button>
 
         <View className='flex flex-row mt-10'>
-          <Text>Recofigure your setup? </Text>
-          <Text className='text-orange-500' onPress={async () => {
+          <Text className='font-nebula'>Recofigure your setup? </Text>
+          <Text className='font-nebula text-orange-500' onPress={async () => {
             await removeSetup();
             dispatch(clear());
           }}> Reset </Text>

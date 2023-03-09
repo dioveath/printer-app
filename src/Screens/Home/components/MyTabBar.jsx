@@ -59,7 +59,7 @@ export default function MyTabBar({ state, descriptors, navigation, position }) {
             return (
             <TouchableOpacity key={index} onPress={onPress} onLongPress={onLongPress} 
             className='flex-1 py-2 justify-center items-center flex flex-row'>
-                <Animated.Text style={{opacity}} className=''>
+                <Animated.Text style={{opacity}} className='font-nebula-semibold'>
                     { label }
                 </Animated.Text>
             </TouchableOpacity>);

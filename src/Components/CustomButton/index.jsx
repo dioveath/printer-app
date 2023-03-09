@@ -9,7 +9,7 @@ const CustomButton = ({ ...props }) => {
   return (
     <TouchableOpacity {...props}>
         <View className={`flex flex-row items-center justify-center rounded-full py-1 px-6 ${getButtonStyle(type)}`}>
-            <Text className={`${getTextStyle(type)} font-bold`}> {props.children} </Text>
+            <Text className={`font-nebula-semibold ${getTextStyle(type)}`}> {props.children} </Text>
         </View>
     </TouchableOpacity>    
   )

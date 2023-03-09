@@ -53,7 +53,7 @@ export default function OrderPage({ navigation, route }) {
 
   if(isError){
     <View className="flex-1 flex flex-col justify-center items-center">
-      <Text>{error}</Text>
+      <Text className='font-nebula-semibold'>{error}</Text>
     </View>    
   }
 
@@ -61,15 +61,15 @@ export default function OrderPage({ navigation, route }) {
     <View className="flex-1">
       <View className="flex flex-row p-6 items-center gap-2">
         <Icon type='material-community' name='location-exit' style={{transform: [{ rotateY: '180deg'}]}} onPress={() => navigation.goBack()}/>
-        <Text>Back to Orders</Text>
+        <Text className='font-nebula-semibold'>Back to Orders</Text>
       </View>
       <ScrollView>
         <View className="w-full flex flex-row justify-between px-6 py-2">
           <View>
-          <Text className='text-orange-500 text-lg uppercase'> <Text className='text-black'>#{item.id}</Text> {item.attributes.order_type}</Text>
+          <Text className='font-nebula-semibold text-orange-500 text-lg uppercase'> <Text className='text-black'>#{item.id}</Text> {item.attributes.order_type}</Text>
             <View className="flex flex-row justify-center items-center border-2 border-orange-500 px-4 py-[2px] rounded-full">
-              <Text>{isMissed ? ICONS['Missed'] : ICONS[item.attributes.status.status_name]}</Text>
-              <Text>{isMissed ? 'Missed' : item.attributes.status.status_name}</Text>
+              <Text className='font-nebula'>{isMissed ? ICONS['Missed'] : ICONS[item.attributes.status.status_name]}</Text>
+              <Text className='font-nebula'>{isMissed ? 'Missed' : item.attributes.status.status_name}</Text>
             </View>
           </View>
           <View className='h-10 w-10 border-orange-500 border-2 rounded-full flex flex-col justify-center items-center'>
@@ -80,20 +80,20 @@ export default function OrderPage({ navigation, route }) {
         <View className="w-full h-[2px] bg-orange-500" />
         { (isOrderFetching || isFetching) && <LinearProgress className="w-full" variant="indeterminate"/> }
         <View className="w-full flex flex-row justify-between py-2 px-6">
-          <Text> Date: {new Date(item.attributes.order_date).toLocaleDateString()} </Text>
-          <Text> Exp. Time: {item.attributes.order_time} </Text>
+          <Text className='font-nebula'> Date: {new Date(item.attributes.order_date).toLocaleDateString()} </Text>
+          <Text className='font-nebula'> Exp. Time: {item.attributes.order_time} </Text>
         </View>
         <View className="w-full h-[2px] bg-gray-200" />
         <View className="w-full flex flex-row justify-between py-2 px-6">
           <View>
-            <Text className="font-bold">
-              {item.attributes.first_name + item.attributes.last_name}
+            <Text className="font-nebula-bold">
+              {item.attributes.first_name + ' ' + item.attributes.last_name}
             </Text>
-            <Text numberOfLines={4} className="w-52 text-gray-700">
+            <Text numberOfLines={4} className="font-nebula w-52 text-gray-700">
               {item.attributes.formatted_address}
             </Text>
           </View>
-          <Text className="font-bold"> {item.attributes.telephone} </Text>
+          <Text className="font-nebula-semibold tracking-wider"> {item.attributes.telephone} </Text>
         </View>
         <View className="w-full h-[2px] bg-gray-200" />
 
@@ -101,10 +101,10 @@ export default function OrderPage({ navigation, route }) {
           return (
             <View className="w-full" key={menu.menu_id}>
               <View className="w-full flex flex-row justify-between py-1 px-6">
-                <Text className="font-bold">
+                <Text className="font-nebula-semibold">
                   {`${menu.quantity} x ${menu.name}`}
                 </Text>
-                <Text className="font-bold">
+                <Text className="font-nebula-semibold">
                   {parseFloat(menu.price).toFixed(2)} &pound;{" "}
                 </Text>
               </View>
@@ -114,10 +114,10 @@ export default function OrderPage({ navigation, route }) {
                     key={option.menu_option_value_id}
                     className="w-full flex flex-row justify-between px-6"
                   >
-                    <Text className="text-gray-700 pl-4">
+                    <Text className="font-nebula text-gray-700 pl-4">
                       {`+ ${option.quantity} x ${option.order_option_name}`}
                     </Text>
-                    <Text className="text-gray-700 pl-4">
+                    <Text className="font-nebula text-gray-700 pl-4">
                       &pound; {parseFloat(option.order_option_price).toFixed(2)}
                     </Text>
                   </View>
@@ -127,7 +127,7 @@ export default function OrderPage({ navigation, route }) {
           );
         })}
 
-        <Text className="font-bold px-6 py-2">
+        <Text className="font-nebula-semibold px-6 py-2">
           Notes: {item.attributes.comment}
         </Text>
 
@@ -138,10 +138,10 @@ export default function OrderPage({ navigation, route }) {
               key={total.order_total_id}
               className="w-full flex flex-row justify-between px-6 py-[2px]"
             >
-              <Text className={`font-bold ${total.code === "total" && "text-[18px]"}`}>
+              <Text className={`font-nebula-semibold ${total.code === "total" && "text-[18px]"}`}>
                 {total.title}
               </Text>
-              <Text className={`font-bold ${total.code === "total" && "text-[18px]"}`}>
+              <Text className={`font-nebula-semibold ${total.code === "total" && "text-[18px]"}`}>
                 {parseFloat(total.value).toFixed(2)} &pound;
               </Text>
             </View>
@@ -151,8 +151,8 @@ export default function OrderPage({ navigation, route }) {
       </ScrollView>
 
       <View className="absolute bottom-0 w-full flex flex-row justify-between px-6 py-10 bg-gray-100">
-        <Button color="#f97316" radius={100} onPress={revertStatus} disabled={isFetching || !canRevert || isMissed}> Revert Order </Button>
-        <Button color="#F97316" radius={100} onPress={updateStatus} disabled={isFetching || !canUpdate || isMissed}> Forward Order </Button>
+        <Button titleStyle={{fontFamily: 'BRNebula-SemiBold'}} buttonStyle={{paddingHorizontal: 20 }} color="#f97316" radius={100} onPress={revertStatus} disabled={isFetching || !canRevert || isMissed}> Revert Order </Button>
+        <Button titleStyle={{fontFamily: 'BRNebula-SemiBold'}} buttonStyle={{paddingHorizontal: 20 }} color="#F97316" radius={100} onPress={updateStatus} disabled={isFetching || !canUpdate || isMissed}> Forward Order </Button>
       </View>
     </View>
   );

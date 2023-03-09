@@ -1,0 +1,85 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/BRNebula-Black.ttf",
+      "sha1": "17c65b9763ca65e8f72f34269761eb3f18348913"
+    },
+    {
+      "path": "assets/fonts/BRNebula-BlackItalic.ttf",
+      "sha1": "1a64d0ed90065105772c72aa062464f604309555"
+    },
+    {
+      "path": "assets/fonts/BRNebula-Bold.ttf",
+      "sha1": "eecc8d97ca56a4b0847711ec5e6c6644655bdbf8"
+    },
+    {
+      "path": "assets/fonts/BRNebula-BoldItalic.ttf",
+      "sha1": "a751a71dd96c2bbae73c1ec7571a5ffcaa77562b"
+    },
+    {
+      "path": "assets/fonts/BRNebula-ExtraLight.ttf",
+      "sha1": "b5975d754b5bbbc82acdfd2705cd54bc6d4c1bcd"
+    },
+    {
+      "path": "assets/fonts/BRNebula-ExtraLightItalic.ttf",
+      "sha1": "8700bda1ec0fe36e8e55dd75dcc88597b459836e"
+    },
+    {
+      "path": "assets/fonts/BRNebula-Hairline.ttf",
+      "sha1": "e9cd3b76caaf8999ab16d46886e62b5dec986f04"
+    },
+    {
+      "path": "assets/fonts/BRNebula-HairlineItalic.ttf",
+      "sha1": "9a8fd36671d7c28c6d468da525cf4db72a827a6e"
+    },
+    {
+      "path": "assets/fonts/BRNebula-Light.ttf",
+      "sha1": "e67346fa2611ae06fc67ce2e9ff4196df5e9fd7c"
+    },
+    {
+      "path": "assets/fonts/BRNebula-LightItalic.ttf",
+      "sha1": "9da00f25bba5bce74d108061fcfb5605a3affa1c"
+    },
+    {
+      "path": "assets/fonts/BRNebula-Medium.ttf",
+      "sha1": "e2366c87322b181bfe8ab1e575c46e89af66e9a6"
+    },
+    {
+      "path": "assets/fonts/BRNebula-MediumItalic.ttf",
+      "sha1": "dc1e4d5fbfe092c5ffb1510991ffdf1ce7c117cd"
+    },
+    {
+      "path": "assets/fonts/BRNebula-Regular.ttf",
+      "sha1": "a798ff443fa9cd7e02be4781fe43aa9ae3e48866"
+    },
+    {
+      "path": "assets/fonts/BRNebula-RegularItalic.ttf",
+      "sha1": "70d06b331a9e4cee992f5d45d0fbc0be7fcfb785"
+    },
+    {
+      "path": "assets/fonts/BRNebula-SemiBold.ttf",
+      "sha1": "ca6351c5b02e70c4ae8bdf30c7df99352d97a429"
+    },
+    {
+      "path": "assets/fonts/BRNebula-SemiBoldItalic.ttf",
+      "sha1": "75ac8ba96b81c0f873ae3fb537aa4e3c4703d717"
+    },
+    {
+      "path": "assets/fonts/BRNebula-Super.ttf",
+      "sha1": "3d4c03d13bf9ab6b120488e0ce3eee85e747fcbf"
+    },
+    {
+      "path": "assets/fonts/BRNebula-SuperItalic.ttf",
+      "sha1": "ddc5f13209ca1cff370285adc79b36ded85a1b9e"
+    },
+    {
+      "path": "assets/fonts/BRNebula-Thin.ttf",
+      "sha1": "59dc21afaedd8e724529c8a4904d1c67b5b0f3b0"
+    },
+    {
+      "path": "assets/fonts/BRNebula-ThinItalic.ttf",
+      "sha1": "627a0ed8dd7e736d7762aebfce8db1589ba7128d"
+    }
+  ]
+}

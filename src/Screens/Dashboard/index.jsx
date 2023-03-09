@@ -53,7 +53,7 @@ const DashboardNavigator = () => {
           tabBarIcon: ({ color, size }) => <Icon name="receipt-outline" type='ionicon' color={color}/>,
           tabBarLabel: ({focused, color, position, children}) => {
             return <View className='mb-4'>
-              <Text style={{color: color }} className={``}> All Orders </Text>
+              <Text style={{color: color }} className={`font-nebula-semibold`}> All Orders </Text>
             </View>
           },
         }}
@@ -67,7 +67,7 @@ const DashboardNavigator = () => {
           tabBarIcon: ({ color, size }) => <Icon name="settings" color={color}/>,
           tabBarLabel: ({focused, color, position, children}) => {
             return <View className='mb-4'>
-              <Text style={{color: color }} className={``}> Settings </Text>
+              <Text style={{color: color }} className={`font-nebula-semibold`}> Settings </Text>
             </View>
           },          
         }}

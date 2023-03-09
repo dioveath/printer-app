@@ -204,17 +204,17 @@ export default function OrderCard({
       <ListItem.Content className="w-full flex flex-row justify-between">
         <View className="w-full flex flex-row items-center justify-between gap-2">
           <View className='flex flex-col'>
-            <Text className='text-orange-500 uppercase'> <Text className='text-black'>#{item.id}</Text> {item.attributes.order_type} </Text>
-            <Text numberOfLines={1} className="w-52 font-bold">
+            <Text className='font-nebula text-orange-500 uppercase'> <Text className='text-black'>#{item.id}</Text> {item.attributes.order_type} </Text>
+            <Text numberOfLines={1} className="font-nebula-bold w-52">
                 {item.attributes.formatted_address}
             </Text>          
           </View>
           
           <View className="flex flex-col items-end gap-1">
-            <Text className="text-gray-700"> {findTotal(item)} &pound; </Text>            
+            <Text className="font-nebula-semibold text-gray-700"> {findTotal(item)} &pound; </Text>            
             <View className="flex flex-row items-center border-[1px] border-orange-500 rounded-full px-4 py-1">
               { isMissed ? ICONS['Missed'] : ICONS[orderStatus] }
-              <Text className={"text-xs " + (isMissed ? "text-red-500" : "text-gray-800")}> {isMissed ? "Missed" : orderStatus} </Text>
+              <Text className={"font-nebula text-xs " + (isMissed ? "text-red-500" : "text-gray-800")}> {isMissed ? "Missed" : orderStatus} </Text>
             </View>
           </View>
         </View>

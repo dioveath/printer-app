@@ -52,7 +52,7 @@ export default function OptionScreen({ navigation }) {
   return (
     <>
       <View className="p-6 py-10 flex flex-row justify-between items-center">
-        <Text className="text-2xl font-bold"> Settings </Text>
+        <Text className="font-nebula-bold text-2xl">Settings </Text>
         <CustomButton type='outlined' onPress={async () => {
           await removeItem();
           dispatch(logout());          
@@ -62,26 +62,27 @@ export default function OptionScreen({ navigation }) {
     <ScrollView className="flex-1">
 
       <View className="h-[1px] bg-gray-300 mt-4 mb-4"/>      
-      <Text className='font-bold px-6'> Connect thermal printer to this app. </Text>
-      <Text className='text-xs px-6 text-gray-500' numberOfLines={4}> Your orders will be printed automatically after you accept them with this app. </Text>
+      <Text className='font-nebula-semibold px-6'>Connect thermal printer to this app. </Text>
+      <Text className='font-nebula text-xs px-6 text-gray-500' numberOfLines={4}>Your orders will be printed automatically after you accept them with this app. </Text>
       <View className="flex flex-row justify-between items-center my-2 px-6">
-        <Text className="font-bold"> Bluetooth </Text>
+        <Text className="font-nebula-semibold">Bluetooth </Text>
         <Switch
           disabled={scanning || isPending}
           value={enabled}
           onValueChange={(value) => toggleBluetooth(value)}
         />
       </View>      
-      <Text className='text-xs px-6 text-gray-500' numberOfLines={4}> Firstly make sure your bluetooth is turned on. </Text>      
+      <Text className='font-nebula text-xs px-6 text-gray-500' numberOfLines={4}>Firstly make sure your bluetooth is turned on. </Text>      
       <View className="h-[1px] bg-gray-300 my-4"/>            
       
-      <Text className='font-bold px-6'> Add a printer. </Text>
-      <Text className='text-xs px-6 text-gray-500' numberOfLines={4}> Next, lets scan for your bluetooth printer. </Text>      
+      <Text className='font-nebula-bold px-6'> Add a printer. </Text>
+      <Text className='font-nebula text-xs px-6 text-gray-500' numberOfLines={4}> Next, lets scan for your bluetooth printer. </Text>      
 
       <View className="my-4 px-6">
         <Button
           color={'#F97316'}
           size="sm"
+          titleStyle={{ fontFamily: 'BRNebula-SemiBold'}}
           radius={100}
           onPress={scanDevices}
           disabled={!enabled}
@@ -92,6 +93,7 @@ export default function OptionScreen({ navigation }) {
         <View className='h-2'/>
         <Button
          color={'#3B82F6'}
+         titleStyle={{ fontFamily: 'BRNebula-SemiBold'}}         
          size="sm"
          radius={100}
           disabled={!canPrint}
@@ -124,11 +126,10 @@ export default function OptionScreen({ navigation }) {
 
       <View className="h-[1px] bg-gray-300 mb-4"/>
 
-
-      <Text className='font-bold px-6'> Found/Scanned Printer </Text>
-      <Text className='text-xs px-6 text-gray-500' numberOfLines={4}> You'll see list of printers that are discoverd and/or paired. </Text>      
+      <Text className='font-nebula-semibold px-6'>Found/Scanned Printer </Text>
+      <Text className='font-nebula text-xs px-6 text-gray-500' numberOfLines={4}>You'll see list of printers that are discoverd and/or paired. </Text>      
         { found && found.length === 0 && (
-            <Text className='text-xs px-6 py-4 text-gray-500' numberOfLines={4}> No printer found. </Text>
+            <Text className='font-nebula text-xs px-6 py-4 text-gray-500' numberOfLines={4}>No printer found. </Text>
         )}
 
         {found.map((d) => {
@@ -149,38 +150,38 @@ export default function OptionScreen({ navigation }) {
                 }
               }}
             >
-              <ListItem.Title> {d.name} </ListItem.Title>
-              <ListItem.Subtitle> {d.bt} </ListItem.Subtitle>
+              <ListItem.Title style={{fontFamily: 'BRNebula-SemiBold'}}> {d.name} </ListItem.Title>
+              <ListItem.Subtitle style={{fontFamily: 'BRNebula-Regular'}}> {d.bt} </ListItem.Subtitle>
             </ListItem>
           );
         })}
       {/* </ListItem.Accordion> */}
 
-      <Text className='font-bold px-6'> Connected Printer </Text>
-      <Text className='text-xs px-6 text-gray-500' numberOfLines={4}> Your connected printer and its status. You can only print when there is green symbol. </Text>
+      <Text className='font-nebula-semibold px-6'>Connected Printer </Text>
+      <Text className='font-nebula text-xs px-6 text-gray-500' numberOfLines={4}>Your connected printer and its status. You can only print when there is green symbol. </Text>
       { connectedPrinter && (
         <>
         <View className="my-2 px-6">
           <View className='flex flex-row gap-2 items-center'>
-          <Text className="text-xs text-gray-700"> {connectedPrinter.name} </Text>
+          <Text className="font-nebula text-xs text-gray-700"> {connectedPrinter.name} </Text>
           <View className={`h-2 w-2 rounded-full ${canPrint ? 'bg-green-500' : 'border-[1px] border-green-500'}`}/>                    
           </View>
           
-          <Text className="text-xs text-gray-700"> {connectedPrinter.bt} </Text>
+          <Text className="font-nebula text-xs text-gray-700"> {connectedPrinter.bt} </Text>
         </View>
 
         <View className='flex flex-row pb-4'>
         <View className="px-6">
-          <Text className="font-bold"> Connection </Text>
-          <Text className="text-xs text-gray-700"> {status?.connection} </Text>
+          <Text className="font-nebula-semibold"> Connection </Text>
+          <Text className="font-nebula text-xs text-gray-700"> {status?.connection} </Text>
         </View>
         <View className="px-6">
-          <Text className="font-bold"> State </Text>
-          <Text className="text-xs text-gray-700"> {status?.online} </Text>
+          <Text className="font-nebula-semibold"> State </Text>
+          <Text className="font-nebula text-xs text-gray-700"> {status?.online} </Text>
         </View>        
         <View className="px-6">
-          <Text className="font-bold"> Paper </Text>
-          <Text className="text-xs text-gray-700"> {status?.paper} </Text>
+          <Text className="font-nebula-semibold"> Paper </Text>
+          <Text className="font-nebula text-xs text-gray-700"> {status?.paper} </Text>
         </View>                
         </View>
 
@@ -189,7 +190,7 @@ export default function OptionScreen({ navigation }) {
 
       <View className="h-10"/>
       <ListItem topDivider bottomDivider onPress={() => navigation.navigate('AddPrinter') }>
-        <ListItem.Title> Supported Printers </ListItem.Title>
+        <ListItem.Title style={{fontFamily: 'BRNebula-SemiBold'}}> Supported Printers </ListItem.Title>
       </ListItem>
       <View className="h-40"/>
 

@@ -54,20 +54,20 @@ export default function Setup() {
     <View className="flex-1 justify-around items-center">
 
       <View className='w-full px-6 gap-4'>
-        <Text className='text-lg font-bold'>Lets get you up and running </Text>
-        <Text className='text-sm'>We need to know some initial information about your website. To get you started please fill in the information below. </Text>
+        <Text className='text-lg font-nebula-bold'>Lets get you up and running </Text>
+        <Text className='text-sm font-nebula'>We need to know some initial information about your website. To get you started please fill in the information below. </Text>
       </View>
       
       
       
       <View className='w-full px-6'>
-        <Text className="text-left mt-2">Enter your website address below: </Text>
-        <Input inputStyle={{ fontSize: 14 }} placeholder="e.g. https://www.yourwebsite.co.uk" value={domain} onChangeText={(val) => { setError(null); setDomain(val); }} />        
+        <Text className="font-nebula text-left mt-2">Enter your website address below: </Text>
+        <Input inputStyle={{ fontSize: 14, fontFamily: 'BRNebula-Regular' }} placeholder="e.g. https://www.yourwebsite.co.uk" value={domain} onChangeText={(val) => { setError(null); setDomain(val); }} />
         {error && <Text className="text-red-500 text-xs text-center">{error}</Text> }
         <Button color={'#F97316'} onPress={onSetup} loading={loading} radius={100}>
 
         <View className='flex flex-row items-center justify-center gap-2'>
-          <Text className='font-bold text-white'>Next step</Text>
+          <Text className='font-nebula-bold text-white'>Next step</Text>
           <Icon type='material-community' name='location-exit' color={'white'} size={20}/>
         </View>          
   
@@ -81,7 +81,7 @@ export default function Setup() {
         </View> */}
       </View>
 
-      <Text className='px-2'>By clicking Next, you agree to our <Text className='text-orange-500' onPress={() => {}}>Terms of Services</Text>, 
+      <Text className='font-nebula leading-5 px-2'>By clicking 'Next step', you agree to our <Text className='text-orange-500' onPress={() => {}}>Terms of Services</Text>, 
           <Text className='text-orange-500' onPress={() => {}}> Community guidelines </Text>and have read <Text className='text-orange-500' onPress={() => {}}> Privacy Policy</Text>.
         </Text>      
     </View>

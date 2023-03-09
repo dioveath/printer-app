@@ -45,10 +45,10 @@ const DashboardNavigator = () => {
       }}
     >
       <Tab.Screen
-        name="All Orders"
+        name="Orders"
         component={HomeScreen}
         options={{
-          title: "All Orders",
+          title: "Orders",
           tabBarActiveTintColor: "#F97316",
           tabBarIcon: ({ color, size }) => <Icon name="receipt-outline" type='ionicon' color={color}/>,
           tabBarLabel: ({focused, color, position, children}) => {

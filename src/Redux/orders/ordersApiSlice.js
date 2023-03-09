@@ -19,7 +19,6 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
       transformResponse: (response) => { 
-        console.log(response.data?.attributes?.status_id)
         return response.data;
        }
     }),

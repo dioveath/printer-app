@@ -14,8 +14,6 @@ const PendingOrders = ({ navigation }) => {
       item.id === selectedId ? "bg-red-500" : "bg-gray-300";
     const textColor = item.id === selectedId ? "text-white" : "text-black";
 
-    console.log(item);
-
     return (
       <OrderCard
         item={item}

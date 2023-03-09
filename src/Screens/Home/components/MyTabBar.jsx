@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Animated } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 
 export default function MyTabBar({ state, descriptors, navigation, position }) {
     const inputRange = state.routes.map((_, i) => i);
@@ -11,20 +11,24 @@ export default function MyTabBar({ state, descriptors, navigation, position }) {
     }            
 
     const singleTabWidth = tabWidth / state.routes.length;    
-    const offset = singleTabWidth/2;
+    const offset = singleTabWidth/4;
 
-    const tabPos = position.interpolate({
-        inputRange,
-        outputRange: inputRange.map(i => i === state.index ? ((tabWidth * (i / state.routes.length)) + offset) : 0)
-    });
-
+    const tabPos = useRef(new Animated.Value(0)).current;
+    
+    useEffect(() => {
+        Animated.timing(tabPos, {
+            toValue: (state.index * (singleTabWidth) + offset),
+            duration: 200,
+            useNativeDriver: true,
+        }).start();
+    }, [state.index, tabWidth]);
 
   return (
     <View onLayout={onLayout} className="bg-white shadow-2xl mb-[1px]" >
     <View className='relative my-2' >
         <View className="w-full h-[1px] bg-orange-500 absolute top-[3px]" />
         <Animated.View className={`h-[6px] bg-orange-500`} style={{
-            width: `${tabPercent}%`,
+            width: singleTabWidth/2,
             transform: [ { translateX: tabPos } ]
         }}/>
     </View>

@@ -16,8 +16,6 @@ const ActiveOrders = ({ navigation }) => {
       item.id === selectedId ? "bg-red-500" : "bg-gray-300";
     const textColor = item.id === selectedId ? "text-white" : "text-black";
 
-    console.log(item);
-
     return (
       <OrderCard
         item={item}
@@ -32,7 +30,7 @@ const ActiveOrders = ({ navigation }) => {
     const orderDate = new Date(item.attributes.order_date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return orderDate.getTime() === today.getTime();
+    return orderDate.getTime() === today.getTime() && item.attributes.status.status_name !== "Completed" && item.attributes.status.status_name !== "Received";
   });
 
   return (

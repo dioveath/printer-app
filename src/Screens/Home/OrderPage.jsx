@@ -3,6 +3,15 @@ import React, { useMemo } from "react";
 import { Icon, Button, LinearProgress } from "@rneui/themed";
 import { useGetOrderQuery, useUpdateOrderMutation } from "../../Redux/orders/ordersApiSlice";
 
+const ICONS = {
+  "Received": <Icon name="receipt" type='material-community' size={16} color={"lightblue"} />,
+  "Pending": <Icon name="clock" type='material-community' size={16} color={"orange"} />,
+  "Preparation": <Icon name="chef-hat" type='material-community' size={16} color={"green"} />,
+  "Delivery": <Icon name="truck-delivery" type='material-community' size={16} color={"blue"} />,
+  "Completed": <Icon name="check" type='material-community' size={16} color={"green"} />,
+  "Missed": <Icon name="call-missed" type='material-community' size={16} color={"red"} />,
+};
+
 export default function OrderPage({ navigation, route }) {
   const { item: propsItem } = route.params;;
   const { data: item, isLoading, isFetching: isOrderFetching, isError, error } = useGetOrderQuery({ id: propsItem.id });
@@ -13,11 +22,12 @@ export default function OrderPage({ navigation, route }) {
 
   const isMissed = useMemo(() => {
     if(!item) return;
+    if(item.attributes.status_name === 'Completed') return false;        
     const orderDate = new Date(item.attributes.order_date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return orderDate.getTime() < today.getTime();
-  }, [])
+  }, [item, item?.attributes.status_name])
 
   const updateStatus = () => {
     console.log("Updating order status...");
@@ -56,9 +66,10 @@ export default function OrderPage({ navigation, route }) {
       <ScrollView>
         <View className="w-full flex flex-row justify-between px-6 py-2">
           <View>
-          <Text className='text-orange-500 text-lg'> <Text className='text-black'>#{item.id}</Text>  Order </Text>
-            <View className="border-2 border-orange-500 px-4 py-[2px] rounded-full">
-              <Text>{item.attributes.status.status_name}</Text>
+          <Text className='text-orange-500 text-lg uppercase'> <Text className='text-black'>#{item.id}</Text> {item.attributes.order_type}</Text>
+            <View className="flex flex-row justify-center items-center border-2 border-orange-500 px-4 py-[2px] rounded-full">
+              <Text>{isMissed ? ICONS['Missed'] : ICONS[item.attributes.status.status_name]}</Text>
+              <Text>{isMissed ? 'Missed' : item.attributes.status.status_name}</Text>
             </View>
           </View>
           <View className='h-10 w-10 border-orange-500 border-2 rounded-full flex flex-col justify-center items-center'>
@@ -140,8 +151,8 @@ export default function OrderPage({ navigation, route }) {
       </ScrollView>
 
       <View className="absolute bottom-0 w-full flex flex-row justify-between px-6 py-10 bg-gray-100">
-        <Button color="#f97316" radius={100} onPress={revertStatus} disabled={isFetching || !canRevert}> Revert Order </Button>
-        <Button color="#F97316" radius={100} onPress={updateStatus} disabled={isFetching || !canUpdate}> Forward Order </Button>
+        <Button color="#f97316" radius={100} onPress={revertStatus} disabled={isFetching || !canRevert || isMissed}> Revert Order </Button>
+        <Button color="#F97316" radius={100} onPress={updateStatus} disabled={isFetching || !canUpdate || isMissed}> Forward Order </Button>
       </View>
     </View>
   );

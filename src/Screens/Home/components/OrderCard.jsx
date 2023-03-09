@@ -39,6 +39,7 @@ export default function OrderCard({
   const [updateOrder, { isLoading: isFetching }] = useUpdateOrderMutation();
 
   const isMissed = useMemo(() => {
+    if(item.attributes.status_name === 'Completed') return false;
     const orderDate = new Date(item.attributes.order_date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -203,8 +204,8 @@ export default function OrderCard({
       <ListItem.Content className="w-full flex flex-row justify-between">
         <View className="w-full flex flex-row items-center justify-between gap-2">
           <View className='flex flex-col'>
-            <Text className='text-orange-500'> <Text className='text-black'>#{item.id}</Text>  Order </Text>
-            <Text numberOfLines={1} className="w-52">
+            <Text className='text-orange-500 uppercase'> <Text className='text-black'>#{item.id}</Text> {item.attributes.order_type} </Text>
+            <Text numberOfLines={1} className="w-52 font-bold">
                 {item.attributes.formatted_address}
             </Text>          
           </View>

@@ -16,6 +16,8 @@ export default function MainApp() {
 
   useEffect(() => {
     setLoading(true);
+
+
     getItem().then((device) => {
       if (device) {
         // set the device in the redux store (current state for us)

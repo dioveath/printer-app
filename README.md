@@ -23,5 +23,5 @@
 - Change revert button to reject status id - 9 - (done)
 - swipe right and icon needs to be removed.. - (done)
 - wipe left needs to be made same as ui - shorter - ??
+- Add sound for incoming order - done
 - Change to Roboto font globally
-- Add sound for incoming order

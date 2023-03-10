@@ -3,11 +3,14 @@ import { ActivityIndicator, FlatList, View, Text } from "react-native";
 import OrderCard from "./components/OrderCard";
 import { useListOrdersQuery, useUpdateOrderMutation } from "../../Redux/orders/ordersApiSlice";
 import { LinearProgress } from "@rneui/themed";
+import { Audio } from "expo-av";
 
 const PendingOrders = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState();
   const { data, isLoading, isFetching, refetch } = useListOrdersQuery(null, { pollingInterval: 30000 });
   const [ updateOrder, { isLoading: isUpdating } ] = useUpdateOrderMutation();
+  const [notifySound, setNotifySound] = useState(null);
+
 
   const renderItem = ({ item }) => {
     if (item.attributes.status.status_name === "Completed") return;
@@ -25,10 +28,30 @@ const PendingOrders = ({ navigation }) => {
     );
   };
 
+  
+  const playSound = async () => {
+    const { sound } = await Audio.Sound.createAsync(require('../../../assets/sounds/notification.mp3'));    
+    await sound.setVolumeAsync(1.0);
+    setNotifySound(sound);
+    await sound.playAsync();
+  };
+
   useEffect(() => {
-    data?.data.forEach((item) => {
-      if (item.attributes.status_id === 1) updateOrder({ id: item.id, status_id: 2 });
-    });
+    (async() => {
+  
+      data?.data.forEach(async (item) => {
+        if (item.attributes.status_id === 1) {
+          try { 
+            await updateOrder({ id: item.id, status_id: 2 }).unwrap();
+            await playSound();
+          } catch(e){
+            console.log(e);
+          }
+        }
+      });      
+    })();
+
+    return () => { notifySound?.unloadAsync(); }
   }, [data])  
 
   const filteredData = data?.data.filter((item) => {

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "printer-app",
-    "slug": "printer-app",
+    "name": "Order Management System",
+    "slug": "order-management-system",
     "version": "0.1.0",
     "sdkVersion": "48.0.0",
     "orientation": "portrait",
@@ -19,11 +19,11 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "com.charicha.printerapp",
+      "bundleIdentifier": "com.anar.oms",
       "supportsTablet": true
     },
     "android": {
-      "package": "com.charicha.printerapp",
+      "package": "com.anar.oms",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"

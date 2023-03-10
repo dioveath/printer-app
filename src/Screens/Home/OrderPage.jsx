@@ -3,6 +3,7 @@ import React, { useMemo } from "react";
 import { Icon, Button, LinearProgress } from "@rneui/themed";
 import { useGetOrderQuery, useUpdateOrderMutation } from "../../Redux/orders/ordersApiSlice";
 import { CustomProgressIndicator } from "../../Components/CustomProgressIndicator";
+import { printReceipt } from "../../lib/printReceipt";
 
 const ICONS = {
   "Received": <Icon name="receipt" type='material-community' size={16} color={"lightblue"} />,
@@ -87,16 +88,19 @@ export default function OrderPage({ navigation, route }) {
               <Text className='font-nebula'>{isMissed ? 'Missed' : item.attributes.status.status_name}</Text>
             </View>
           </View>
-          <View className='h-10 w-10 border-orange-500 border-2 rounded-full flex flex-col justify-center items-center'>
-            <Icon type="material-community" name="printer-outline" size={20} />
-          </View>
+            <TouchableOpacity onPress={() => printReceipt(item, "https://sliceup.pizza/assets/media/uploads/logo%203.png")}>
+            <View className='h-10 w-10 border-orange-500 border-2 rounded-full flex flex-col justify-center items-center'>
+              <Icon type="material-community" name="printer-outline" size={20} />
+            </View>
+            </TouchableOpacity>
+            
           
         </View>
         <View className="w-full h-[2px] bg-orange-500" />
         { (isOrderFetching || isFetching) && <LinearProgress className="w-full" variant="indeterminate"/> }
         <View className="w-full flex flex-row justify-between py-2 px-6">
           <Text className='font-nebula'> Date: {new Date(item.attributes.order_date).toLocaleDateString()} </Text>
-          <Text className='font-nebula'> Exp. Time: {item.attributes.order_time} </Text>
+          <Text className='font-nebula'> Time: {item.attributes.order_time} </Text>
         </View>
         <View className="w-full h-[2px] bg-gray-200" />
         <View className="w-full flex flex-row justify-between py-2 px-6">
@@ -108,7 +112,11 @@ export default function OrderPage({ navigation, route }) {
               {item.attributes.formatted_address}
             </Text>
           </View>
+          <View className='flex flex-col items-end'>
+          <Text className='font-nebula-semibold'> Payment: <Text className='uppercase'>{ item.attributes.payment }</Text> </Text>
           <Text className="font-nebula-semibold tracking-wider"> {item.attributes.telephone} </Text>
+          </View>
+          
         </View>
         <View className="w-full h-[2px] bg-gray-200" />
 

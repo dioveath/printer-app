@@ -1,4 +1,4 @@
-package com.charicha.printerapp;
+package com.anar.oms;
 
 import android.os.Build;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.charicha.printerapp;
+package com.anar.oms;
 
 import android.app.Application;
 import android.content.res.Configuration;

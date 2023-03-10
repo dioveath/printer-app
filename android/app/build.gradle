@@ -113,13 +113,13 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace 'com.charicha.printerapp'
+    namespace 'com.anar.oms'
     defaultConfig {
-        applicationId 'com.charicha.printerapp'
+        applicationId 'com.anar.oms'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0.0"
+        versionName "0.1.0"
     }
 
     splits {

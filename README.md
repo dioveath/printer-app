@@ -24,4 +24,8 @@
 - swipe right and icon needs to be removed.. - (done)
 - wipe left needs to be made same as ui - shorter - ??
 - Add sound for incoming order - done
-- Change to Roboto font globally - 
+- Change to Roboto / Montserrat font globally - done
+- Update logo and package names - done
+- Add functionality in Order Page to print orders - done
+- Add Payment method in Order Page
+- Improve and Beautify printer receipt

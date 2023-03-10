@@ -8,7 +8,7 @@ module.exports = {
         'nebula': ['Montserrat-Medium', 'sans-serif'],
         'nebula-thin': ['Montserrat-Thin', 'sans-serif'],
         'nebula-light': ['Montserrat-Regular', 'sans-serif'],
-        'nebula-semibold': ['Montserrat-Medium', 'sans-serif'],
+        'nebula-semibold': ['Montserrat-SemiBold', 'sans-serif'],
         'nebula-bold': ['Montserrat-Bold', 'sans-serif'],
       },
       colors: {

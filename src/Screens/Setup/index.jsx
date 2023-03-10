@@ -81,7 +81,7 @@ export default function Setup() {
         </View> */}
       </View>
 
-      <Text className='font-nebula leading-5 px-2'>By clicking 'Next step', you agree to our <Text className='text-orange-500' onPress={() => {}}>Terms of Services</Text>, 
+      <Text className='font-nebula leading-5 px-6'>By clicking 'Next step', you agree to our <Text className='text-orange-500' onPress={() => {}}>Terms of Services</Text>, 
           <Text className='text-orange-500' onPress={() => {}}> Community guidelines </Text>and have read <Text className='text-orange-500' onPress={() => {}}> Privacy Policy</Text>.
         </Text>      
     </View>

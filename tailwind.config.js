@@ -4,12 +4,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: { 
-        'sans': ['BRNebula-Regular', 'sans-serif'],
-        'nebula': ['BRNebula-Regular', 'sans-serif'],
-        'nebula-thin': ['BRNebula-Thin', 'sans-serif'],
-        'nebula-light': ['BRNebula-Light', 'sans-serif'],
-        'nebula-semibold': ['BRNebula-SemiBold', 'sans-serif'],
-        'nebula-bold': ['BRNebula-Bold', 'sans-serif'],
+        'sans': ['Roboto-Regular', 'sans-serif'],
+        'nebula': ['Montserrat-Medium', 'sans-serif'],
+        'nebula-thin': ['Montserrat-Thin', 'sans-serif'],
+        'nebula-light': ['Montserrat-Regular', 'sans-serif'],
+        'nebula-semibold': ['Montserrat-Medium', 'sans-serif'],
+        'nebula-bold': ['Montserrat-Bold', 'sans-serif'],
       },
       colors: {
         'interorange': '#FE4800',

@@ -12,6 +12,8 @@ const ActiveOrders = ({ navigation }) => {
 
   const renderItem = ({ item }) => {
     if (item.attributes.status.status_name === "Completed") return;
+    if (item.attributes.status.status_id === 9) return; // canceled
+    if (item.attributes.status.status_id === 2) return; // pending
     const backgroundColor =
       item.id === selectedId ? "bg-red-500" : "bg-gray-300";
     const textColor = item.id === selectedId ? "text-white" : "text-black";

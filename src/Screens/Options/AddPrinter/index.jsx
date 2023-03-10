@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import React from "react";
 import { Button, Icon } from "@rneui/themed";
 
@@ -6,10 +6,12 @@ export default function AddPrinter({ navigation }) {
   return (
     <>
       <View className="p-6 py-10 flex flex-row justify-between items-center">
-        <View className="flex flex-row items-center justify-center">
-          <Icon type='material-community' name='location-exit' style={{transform: [{ rotateY: '180deg'}]}} onPress={() => navigation.goBack()}/>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <View className="flex flex-row items-center justify-center gap-2">
+          <Icon type='material-community' name='location-exit' style={{transform: [{ rotateY: '180deg'}]}}/>
           <Text className='font-nebula-bold text-lg'> Back </Text>
         </View>
+        </TouchableOpacity>
       </View>
       <View className="h-[1px] bg-orange-500"/>
       <ScrollView className="relative flex-1 px-6 py-4">

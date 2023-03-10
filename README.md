@@ -15,3 +15,13 @@
 - Add Order details page (done)
 - Reimplement and upgrade to new UIs (done)
 - Change the order received to order pending as soon as we get the order (done)
+
+- Back Button needs to activate on text as well - (done)
+- Add Item comment - (done)
+- Pound sign before prices on multiple pages - (done)
+- Change forward order to Accept - (done)
+- Change revert button to reject status id - 9 - (done)
+- swipe right and icon needs to be removed.. - (done)
+- wipe left needs to be made same as ui - shorter - ??
+- Change to Roboto font globally
+- Add sound for incoming order

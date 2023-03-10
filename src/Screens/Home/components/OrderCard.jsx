@@ -24,6 +24,7 @@ const ICONS = {
   "Delivery": <Icon name="truck-delivery" type='material-community' size={12} color={"blue"} />,
   "Completed": <Icon name="check" type='material-community' size={12} color={"green"} />,
   "Missed": <Icon name="call-missed" type='material-community' size={12} color={"red"} />,
+  "Canceled": <Icon name='close' type='material-community' size={16} color={"red"} />,  
 };
 
 export default function OrderCard({
@@ -157,7 +158,7 @@ export default function OrderCard({
     return total?.value && parseFloat(total.value).toFixed(2);
   };
 
-  const orderStatus = DELIVERY_STATUS[item.attributes.status_id];
+  const orderStatus = item.attributes.status.status_name;
 
   return (
     <ListItem.Swipeable
@@ -181,25 +182,25 @@ export default function OrderCard({
           </TouchableOpacity>          
         );
       }}
-      leftContent={(reset) => {
-        return (
-          <TouchableOpacity onPress={() => {
-            if(isMissed) { reset(); return; }
-            if(orderStatus === 'Completed') return;
-            updateStatus();
-          }} disabled={!(orderStatus !== 'Completed')}>
-          <View onPress={() => { console.log("fdsaadsf"); }}
-          className={`w-full h-full flex flex-row items-center justify-center 
-          ${orderStatus === 'Completed' ? 'bg-green-500' : 'bg-orange-500'}`}>
-            { isFetching && <ActivityIndicator color={'white'}/> }
-            { !isFetching && <Icon name={orderStatus === 'Completed' ? 'check' : 'update'} type="material-comunity"
-              size={32}
-              color={"white"}
-            /> }
-          </View>
-          </TouchableOpacity>
-        )
-      }}
+      // leftContent={(reset) => {
+      //   return (
+      //     <TouchableOpacity onPress={() => {
+      //       if(isMissed) { reset(); return; }
+      //       if(orderStatus === 'Completed') return;
+      //       updateStatus();
+      //     }} disabled={!(orderStatus !== 'Completed')}>
+      //     <View onPress={() => { console.log("fdsaadsf"); }}
+      //     className={`w-full h-full flex flex-row items-center justify-center 
+      //     ${orderStatus === 'Completed' ? 'bg-green-500' : 'bg-orange-500'}`}>
+      //       { isFetching && <ActivityIndicator color={'white'}/> }
+      //       { !isFetching && <Icon name={orderStatus === 'Completed' ? 'check' : 'update'} type="material-comunity"
+      //         size={32}
+      //         color={"white"}
+      //       /> }
+      //     </View>
+      //     </TouchableOpacity>
+      //   )
+      // }}
     >
       <ListItem.Content className="w-full flex flex-row justify-between">
         <View className="w-full flex flex-row items-center justify-between gap-2">
@@ -211,7 +212,7 @@ export default function OrderCard({
           </View>
           
           <View className="flex flex-col items-end gap-1">
-            <Text className="font-nebula-semibold text-gray-700"> {findTotal(item)} &pound; </Text>            
+            <Text className="font-nebula-semibold text-gray-700">&pound; {findTotal(item)}</Text>            
             <View className="flex flex-row items-center border-[1px] border-orange-500 rounded-full px-2 py-1">
               { isMissed ? ICONS['Missed'] : ICONS[orderStatus] }
               <Text className={"font-nebula text-xs " + (isMissed ? "text-red-500" : "text-gray-800")}> {isMissed ? "Missed" : orderStatus} </Text>

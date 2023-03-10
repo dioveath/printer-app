@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import React, { useMemo } from "react";
 import { Icon, Button, LinearProgress } from "@rneui/themed";
 import { useGetOrderQuery, useUpdateOrderMutation } from "../../Redux/orders/ordersApiSlice";
@@ -11,6 +11,7 @@ const ICONS = {
   "Delivery": <Icon name="truck-delivery" type='material-community' size={16} color={"blue"} />,
   "Completed": <Icon name="check" type='material-community' size={16} color={"green"} />,
   "Missed": <Icon name="call-missed" type='material-community' size={16} color={"red"} />,
+  "Canceled": <Icon name='close' type='material-community' size={16} color={"red"} />,
 };
 
 export default function OrderPage({ navigation, route }) {
@@ -20,6 +21,10 @@ export default function OrderPage({ navigation, route }) {
 
   const canUpdate = item?.attributes.status_id < 5;  
   const canRevert = item?.attributes.status_id > 1;
+
+  const isPending = useMemo(() => item?.attributes.status_id === 2, [item, item?.attributes.status_id]);  
+  const isCanceled = useMemo(() => item?.attributes.status_id === 9, [item, item?.attributes.status_id]);
+  const isCompleted = useMemo(() => item?.attributes.status_id === 5, [item, item?.attributes.status_id]);
 
   const isMissed = useMemo(() => {
     if(!item) return;
@@ -44,6 +49,12 @@ export default function OrderPage({ navigation, route }) {
     updateOrder({ id: item.id, status_id: item.attributes.status_id - 1 });
   };
 
+  const rejectStatus = () => {
+    if(!item) return;
+    if(item.attributes.status_id === 5) return;
+    updateOrder({ id: item.id, status_id: 9 });
+  }
+
   if(isLoading || !item) {
     return (
       <View className="flex-1 flex flex-col justify-center items-center">
@@ -61,16 +72,18 @@ export default function OrderPage({ navigation, route }) {
 
   return (
     <View className="flex-1">
+      <TouchableOpacity onPress={() => navigation.goBack()}>
       <View className="flex flex-row p-6 items-center gap-2">
-        <Icon type='material-community' name='location-exit' style={{transform: [{ rotateY: '180deg'}]}} onPress={() => navigation.goBack()}/>
+        <Icon type='material-community' name='location-exit' style={{transform: [{ rotateY: '180deg'}]}}/>
         <Text className='font-nebula-semibold'>Back to Orders</Text>
       </View>
-      <ScrollView>
+      </TouchableOpacity>      
+      <ScrollView className='mb-28'>
         <View className="w-full flex flex-row justify-between px-6 py-2">
           <View>
           <Text className='font-nebula-semibold text-orange-500 text-lg uppercase'> <Text className='text-black'>#{item.id}</Text> {item.attributes.order_type}</Text>
             <View className="flex flex-row justify-center items-center border-2 border-orange-500 px-4 py-[2px] rounded-full">
-              <Text className='font-nebula'>{isMissed ? ICONS['Missed'] : ICONS[item.attributes.status.status_name]}</Text>
+              <Text className='font-nebula px-1'>{isMissed ? ICONS['Missed'] : ICONS[item.attributes.status.status_name]}</Text>
               <Text className='font-nebula'>{isMissed ? 'Missed' : item.attributes.status.status_name}</Text>
             </View>
           </View>
@@ -101,13 +114,13 @@ export default function OrderPage({ navigation, route }) {
 
         {item.attributes.order_menus.map((menu, index) => {
           return (
-            <View className="w-full" key={menu.menu_id}>
+            <View className="w-full" key={menu.order_menu_id}>
               <View className="w-full flex flex-row justify-between py-1 px-6">
                 <Text className="font-nebula-semibold">
                   {`${menu.quantity} x ${menu.name}`}
                 </Text>
                 <Text className="font-nebula-semibold">
-                  {parseFloat(menu.price).toFixed(2)} &pound;
+                  &pound; {parseFloat(menu.price).toFixed(2)} 
                 </Text>
               </View>
               {menu.menu_options.map((option, index) => {
@@ -120,11 +133,12 @@ export default function OrderPage({ navigation, route }) {
                       {`+ ${option.quantity} x ${option.order_option_name}`}
                     </Text>
                     <Text className="font-nebula text-gray-700 pl-4">
-                      {parseFloat(option.order_option_price).toFixed(2)} &pound;
+                      &pound; {parseFloat(option.order_option_price).toFixed(2)}
                     </Text>
                   </View>
                 );
               })}
+              <Text className='font-nebula-semibold text-xs px-6'>Note: {menu.comment}</Text>              
             </View>
           );
         })}
@@ -144,7 +158,7 @@ export default function OrderPage({ navigation, route }) {
                 {total.title}
               </Text>
               <Text className={`font-nebula-semibold ${total.code === "total" && "text-[18px]"}`}>
-                {parseFloat(total.value).toFixed(2)} &pound;
+                &pound; {parseFloat(total.value).toFixed(2)}
               </Text>
             </View>
           );
@@ -152,9 +166,17 @@ export default function OrderPage({ navigation, route }) {
         </View>        
       </ScrollView>
 
-      <View className="absolute bottom-0 w-full flex flex-row justify-between px-6 py-10 bg-gray-100">
-        <Button titleStyle={{fontFamily: 'BRNebula-SemiBold'}} buttonStyle={{paddingHorizontal: 20 }} color="#f97316" radius={100} onPress={revertStatus} disabled={isFetching || !canRevert || isMissed}> Revert Order </Button>
-        <Button titleStyle={{fontFamily: 'BRNebula-SemiBold'}} buttonStyle={{paddingHorizontal: 20 }} color="#F97316" radius={100} onPress={updateStatus} disabled={isFetching || !canUpdate || isMissed}> Forward Order </Button>
+      <View className="absolute bottom-0 w-full flex flex-row justify-between px-6 py-10">
+        <Button titleStyle={{fontFamily: 'BRNebula-SemiBold'}} 
+          buttonStyle={{paddingHorizontal: 20 }} 
+          color="#f97316" radius={100} 
+          onPress={rejectStatus} 
+          disabled={isFetching || !canRevert || isMissed || isCanceled || isCompleted }> Reject Order </Button>
+        <Button titleStyle={{fontFamily: 'BRNebula-SemiBold'}} 
+          buttonStyle={{paddingHorizontal: 20 }} 
+          color="#F97316" radius={100} 
+          onPress={updateStatus} 
+          disabled={isFetching || !canUpdate || isMissed}> {isPending ? "Accept Order" : "Forward Order"} </Button>
       </View>
     </View>
   );

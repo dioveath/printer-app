@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import React, { useMemo } from "react";
-import { Icon, Button, LinearProgress } from "@rneui/themed";
+import React, { useMemo, useState } from "react";
+import { Icon, Button, LinearProgress, ButtonGroup } from "@rneui/themed";
 import { useSelector } from "react-redux";
 
 import { useGetOrderQuery, useUpdateOrderMutation } from "../../Redux/orders/ordersApiSlice";
@@ -27,10 +27,31 @@ const RIGHT_BUTTON_LABELS = {
   "Canceled": "Canceled Order",
 };
 
+function padTo2Digits(num) {
+  return num.toString().padStart(2, '0');
+}
+
+function formatDate(date) {
+  return (
+    [
+      date.getFullYear(),
+      padTo2Digits(date.getMonth() + 1),
+      padTo2Digits(date.getDate()),
+    ].join('-') +
+    ' ' +
+    [
+      padTo2Digits(date.getHours()),
+      padTo2Digits(date.getMinutes()),
+      padTo2Digits(date.getSeconds()),
+    ].join(':')
+  );
+}
+
 export default function OrderPage({ navigation, route }) {
   const { item: propsItem } = route.params;;
   const { data: item, isLoading, isFetching: isOrderFetching, isError, error } = useGetOrderQuery({ id: propsItem.id });
   const [updateOrder, { isLoading: isFetching }] = useUpdateOrderMutation();
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { isEnabled } = useSelector((state) => state.bluetooth);
   const { device, status } = useSelector((state) => state.printer);
@@ -53,6 +74,19 @@ export default function OrderPage({ navigation, route }) {
     today.setHours(0, 0, 0, 0);
     return orderDate.getTime() < today.getTime();
   }, [item, item?.attributes.status_name])
+
+  const acceptOrder = async () => {
+    if(!item) return;
+    if(item.attributes.status_id != 2) return;
+
+    const orderDate = new Date(item.attributes.invoice_date);
+    orderDate.setMinutes(orderDate.getMinutes() + 30 + (10 * selectedIndex));
+
+    const orderDateTime = formatDate(orderDate);
+    const orderTime = orderDateTime.split(' ')[1];
+
+    updateOrder({ id: item.id, status_id: 3, order_time: orderTime});
+  }
 
   const updateStatus = () => {
     console.log("Updating order status...");
@@ -192,7 +226,19 @@ export default function OrderPage({ navigation, route }) {
         </View>        
       </ScrollView>
 
-      <View className="absolute bottom-0 w-full flex flex-row justify-between px-6 py-10">
+      <View className="absolute bottom-0 w-full flex flex-col justify-between px-6 py-10 gap-y-2">
+        { isPending && <ButtonGroup className="w-full bg-orange-700"
+          buttons={['30 MIN', '40 MIN', '50 MIN']}
+          buttonStyle={{backgroundColor: '#F97316', borderRadius: 100, color: '#fff', fontFamily: 'Montserrat-SemiBold'}}
+          textStyle={{fontFamily: 'Montserrat-SemiBold', color: '#fff'}}
+          selectedButtonStyle={{backgroundColor: 'rgb(195, 65, 12)', borderRadius: 100, color: '#fff', fontFamily: 'Montserrat-SemiBold'}}
+          containerStyle={{backgroundColor: 'transparent', border: 0, shadowColor: 'transparent'}}
+          buttonContainerStyle={{border: 0, borderWidth: 0, shadowOffset: 0, shadowColor: 'transparent', backgroundColor: 'transparent'}}
+          innerBorderStyle={{width: 0}}
+          selectedIndex={selectedIndex}
+          onPress={(value) => setSelectedIndex(value)}
+        /> }
+        <View className='flex flex-row justify-between'>
         <Button titleStyle={{fontFamily: 'BRNebula-SemiBold'}} 
           buttonStyle={{paddingHorizontal: 20 }} 
           color="#f97316" radius={100} 
@@ -201,8 +247,10 @@ export default function OrderPage({ navigation, route }) {
         <Button titleStyle={{fontFamily: 'BRNebula-SemiBold'}} 
           buttonStyle={{paddingHorizontal: 20 }} 
           color="#F97316" radius={100} 
-          onPress={updateStatus} 
+          onPress={isPending ? acceptOrder : updateStatus} 
           disabled={isFetching || !canUpdate || isMissed}> { RIGHT_BUTTON_LABELS[isMissed ? "Missed" : item.attributes.status.status_name]} </Button>
+        </View>
+
       </View>
     </View>
   );

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View, Text } from "react-native";
+import { ActivityIndicator, FlatList, View, Text, TouchableOpacity } from "react-native";
+import { Icon } from '@rneui/themed'
 import OrderCard from "./components/OrderCard";
 import { useListOrdersQuery, useUpdateOrderMutation } from "../../Redux/orders/ordersApiSlice";
 import { LinearProgress } from "@rneui/themed";
@@ -30,10 +31,12 @@ const PendingOrders = ({ navigation }) => {
 
   
   const playSound = async () => {
+    if(notifySound) return;
     const { sound } = await Audio.Sound.createAsync(require('../../../assets/sounds/notification.mp3'));    
     await sound.setVolumeAsync(1.0);
+    await sound.setIsLoopingAsync(true);
+    await sound.playAsync();    
     setNotifySound(sound);
-    await sound.playAsync();
   };
 
   useEffect(() => {
@@ -51,7 +54,10 @@ const PendingOrders = ({ navigation }) => {
       });      
     })();
 
-    return () => { notifySound?.unloadAsync(); }
+    return () => { 
+      notifySound?.stopAsync();
+      notifySound?.unloadAsync(); 
+    }
   }, [data])  
 
   const filteredData = data?.data.filter((item) => {
@@ -66,6 +72,17 @@ const PendingOrders = ({ navigation }) => {
       {isLoading && <View className='flex-1 justify-center'>
           <ActivityIndicator color={'#f97316'} size={'large'}/>
         </View>}
+      { notifySound && 
+        <TouchableOpacity className='flex-1 w-full h-full justify-center absolute top-0 bottom-0 z-10 bg-gray-100/50' onPress={() => {
+          notifySound?.stopAsync() 
+          notifySound?.unloadAsync();
+          setNotifySound(null);
+        }}>
+          <View className='flex-1 w-full h-full justify-center items-center'>
+            <Icon name='notifications-off' type="ionicon" color={'#f97316'} size={32}/>
+          </View>
+        </TouchableOpacity> 
+        }
       {!isLoading && data && (
         <FlatList
           data={filteredData}

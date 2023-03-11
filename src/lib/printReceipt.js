@@ -8,53 +8,71 @@ const printReceipt = (item, logoUri) => {
       const printing = new EscPosPrinter.printing();
       const printObj = printing
         .initialize()
+        // .align("center")
+        // .image(
+        //   { uri: logoUri },
+        //   { width: 400 }
+        // )
+        .newline()
+        .newline()
+        .newline()
+        .size(2, 2)
         .align("center")
-        .image(
-          { uri: logoUri },
-          { width: 400 }
-        )
-        .newline()
+        .bold(true)
+        .text(`# ${item.id}`).newline()
+        .bold(false)
+
         .size(1, 1)
-        .textLine(48, {
-          left: `Date: ${new Date(
-            item.attributes.order_date
-          ).toLocaleString()}`,
-          right: `Order ID: ${item.id}`,
-          gapSymbol: " ",
-        })
-        .newline()
-        .textLine(48, {
-          left: `Name: ${item.attributes.first_name} ${item.attributes.last_name}`,
-          right: `Phone: ${item.attributes.telephone}`,
-          gapSymbol: " ",
-        })
-        .textLine(48, {
-          left: `Address: ${item.attributes.formatted_address}`,
-          right: `Payment: ${item.attributes.payment}`,
-          gapSymbol: " ",
-        })
-        .textLine(48, { left: "-", right: "-", gapSymbol: "-" })
+        .bold(true)
+        .text(`${new Date(
+          item.attributes.invoice_date
+        ).toLocaleString()}`).newline()
+        
+        .size(2, 2)
+        .bold(false)
+        .text(`${item.attributes.first_name} ${item.attributes.last_name}`).newline()
+        .text(`${item.attributes.payment}`).newline().newline()
+
+        .size(2, 2).bold(false)
+        .text(`${item.attributes.formatted_address}`).newline().newline()
+        .size(2, 2).bold(true)
+        .text(`${item.attributes.telephone}`).newline()
+
+        .textLine(48, { left: "=", right: "=", gapSymbol: "=" })
         .newline();
 
-      item.attributes.order_menus.forEach((item) => {
+      
+      item.attributes.order_menus.forEach((menu) => {
+        printObj.bold(true).size(2, 2);
         printObj.textLine(48, {
-          left: `${item.quantity}x ${item.name}`,
-          right: `${item.price}`,
+          left: `${menu.quantity}x ${menu.name}`,
+          right: `£${parseFloat(menu.price).toFixed(2)}`,
           gapSymbol: ".",
         });
 
-        item.menu_options.forEach((options) => {
+        printObj.newline().newline();
+        menu.menu_options.forEach((options) => {
+          printObj.bold(true).size(1, 1);
           printObj.textLine(48, {
             left: `+ ${options.quantity}x ${options.order_option_name}`,
-            right: `${options.order_option_price}`,
+            right: `£${parseFloat(options.order_option_price).toFixed(2)}`,
             gapSymbol: ".",
-          });
+          }).newline();
         });
+
+        printObj.newline().align('left')
+          .text(`Notes: ${menu.comment}`).newline()
+
+        printObj.newline();
       });
 
-      printObj.textLine(48, { left: "=", right: "=", gapSymbol: "=" });
+      printObj.size(2, 2).bold(true);
+      printObj.textLine(48, { left: "=", right: "=", gapSymbol: "=" }).newline();
 
-      printObj.bold(true).size(1, 1);
+      printObj.align('left').text(`Notes: ${item.attributes.comment}`).newline().newline();
+
+
+      printObj.size(2, 2).bold(false);
       let grandTotal = null;
       item.attributes.order_totals.forEach((total) => {
         if (total.code === "total") {
@@ -65,15 +83,16 @@ const printReceipt = (item, logoUri) => {
         printObj
           .textLine(48, {
             left: `${total.title}`,
-            right: `${total.value}`,
+            right: `£${parseFloat(total.value).toFixed(2)}`,
             gapSymbol: ".",
           })
           .newline();
       });
 
-      printObj.size(2, 2).textLine(48, {
+      
+      printObj.size(2, 2).bold(true).textLine(48, {
         left: `${grandTotal.title}`,
-        right: `${grandTotal.value}`,
+        right: `£${parseFloat(grandTotal.value).toFixed(2)}`,
         gapSymbol: ".",
       });
 
@@ -83,6 +102,7 @@ const printReceipt = (item, logoUri) => {
         .newline()
         .newline()
         .align("center")
+        .bold(true)
         .text("Thank you for your order!");
 
       printObj.newline().cut().send();

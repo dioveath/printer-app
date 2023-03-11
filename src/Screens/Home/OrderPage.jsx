@@ -1,6 +1,8 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import React, { useMemo } from "react";
 import { Icon, Button, LinearProgress } from "@rneui/themed";
+import { useSelector } from "react-redux";
+
 import { useGetOrderQuery, useUpdateOrderMutation } from "../../Redux/orders/ordersApiSlice";
 import { CustomProgressIndicator } from "../../Components/CustomProgressIndicator";
 import { printReceipt } from "../../lib/printReceipt";
@@ -15,10 +17,24 @@ const ICONS = {
   "Canceled": <Icon name='close' type='material-community' size={16} color={"red"} />,
 };
 
+const RIGHT_BUTTON_LABELS = {
+  "Received": "Start Order",
+  "Pending": "Accept Order",
+  "Preparation": "Out for Delivery",
+  "Delivery": "Complete Order",
+  "Completed": "Completed",
+  "Missed": "Missed Order",
+  "Canceled": "Canceled Order",
+};
+
 export default function OrderPage({ navigation, route }) {
   const { item: propsItem } = route.params;;
   const { data: item, isLoading, isFetching: isOrderFetching, isError, error } = useGetOrderQuery({ id: propsItem.id });
   const [updateOrder, { isLoading: isFetching }] = useUpdateOrderMutation();
+
+  const { isEnabled } = useSelector((state) => state.bluetooth);
+  const { device, status } = useSelector((state) => state.printer);
+  const canPrint = (device && isEnabled && status?.connection === 'CONNECT');  
 
   const canUpdate = item?.attributes.status_id < 5;  
   const canRevert = item?.attributes.status_id > 1;
@@ -26,6 +42,9 @@ export default function OrderPage({ navigation, route }) {
   const isPending = useMemo(() => item?.attributes.status_id === 2, [item, item?.attributes.status_id]);  
   const isCanceled = useMemo(() => item?.attributes.status_id === 9, [item, item?.attributes.status_id]);
   const isCompleted = useMemo(() => item?.attributes.status_id === 5, [item, item?.attributes.status_id]);
+
+  const leftButtonLabel = isPending ? 'Reject Order' : 'Cancel Order';
+  const rightButtonLabel = isPending ? 'Accept Order' : 'Complete Order';
 
   const isMissed = useMemo(() => {
     if(!item) return;
@@ -88,8 +107,8 @@ export default function OrderPage({ navigation, route }) {
               <Text className='font-nebula'>{isMissed ? 'Missed' : item.attributes.status.status_name}</Text>
             </View>
           </View>
-            <TouchableOpacity onPress={() => printReceipt(item, "https://sliceup.pizza/assets/media/uploads/logo%203.png")}>
-            <View className='h-10 w-10 border-orange-500 border-2 rounded-full flex flex-col justify-center items-center'>
+            <TouchableOpacity onPress={() => { if(canPrint) printReceipt(item, "https://sliceup.pizza/assets/media/uploads/logo%203.png"); }}>
+            <View className={`h-10 w-10 border-orange-500 border-2 rounded-full flex flex-col justify-center items-center ${canPrint ? 'border-orange-500' : 'border-gray-500'}`}>
               <Icon type="material-community" name="printer-outline" size={20} />
             </View>
             </TouchableOpacity>
@@ -179,12 +198,12 @@ export default function OrderPage({ navigation, route }) {
           buttonStyle={{paddingHorizontal: 20 }} 
           color="#f97316" radius={100} 
           onPress={rejectStatus} 
-          disabled={isFetching || !canRevert || isMissed || isCanceled || isCompleted }> Reject Order </Button>
+          disabled={isFetching || !canRevert || isMissed || isCanceled || isCompleted }> { leftButtonLabel } </Button>
         <Button titleStyle={{fontFamily: 'BRNebula-SemiBold'}} 
           buttonStyle={{paddingHorizontal: 20 }} 
           color="#F97316" radius={100} 
           onPress={updateStatus} 
-          disabled={isFetching || !canUpdate || isMissed}> {isPending ? "Accept Order" : "Forward Order"} </Button>
+          disabled={isFetching || !canUpdate || isMissed}> { RIGHT_BUTTON_LABELS[isMissed ? "Missed" : item.attributes.status.status_name]} </Button>
       </View>
     </View>
   );

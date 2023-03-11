@@ -27,5 +27,5 @@
 - Change to Roboto / Montserrat font globally - done
 - Update logo and package names - done
 - Add functionality in Order Page to print orders - done
-- Add Payment method in Order Page
-- Improve and Beautify printer receipt
+- Add Payment method in Order Page - done
+- Improve and Beautify printer receipt - 

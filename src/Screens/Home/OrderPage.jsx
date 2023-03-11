@@ -44,8 +44,7 @@ export default function OrderPage({ navigation, route }) {
   const isCompleted = useMemo(() => item?.attributes.status_id === 5, [item, item?.attributes.status_id]);
 
   const leftButtonLabel = isPending ? 'Reject Order' : 'Cancel Order';
-  const rightButtonLabel = isPending ? 'Accept Order' : 'Complete Order';
-
+  
   const isMissed = useMemo(() => {
     if(!item) return;
     if(item.attributes.status_name === 'Completed') return false;        

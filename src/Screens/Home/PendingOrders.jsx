@@ -1,17 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View, Text, TouchableOpacity } from "react-native";
 import { Icon } from '@rneui/themed'
 import OrderCard from "./components/OrderCard";
 import { useListOrdersQuery, useUpdateOrderMutation } from "../../Redux/orders/ordersApiSlice";
-import { LinearProgress } from "@rneui/themed";
-import { Audio } from "expo-av";
+import { SoundContext } from "../../hooks/useNotifySound";
+
 
 const PendingOrders = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState();
   const { data, isLoading, isFetching, refetch } = useListOrdersQuery(null, { pollingInterval: 30000 });
   const [ updateOrder, { isLoading: isUpdating } ] = useUpdateOrderMutation();
-  const [notifySound, setNotifySound] = useState(null);
-
+  const { playSound, stopSound, isPlaying } = useContext(SoundContext);
 
   const renderItem = ({ item }) => {
     if (item.attributes.status.status_name === "Completed") return;
@@ -29,24 +28,13 @@ const PendingOrders = ({ navigation }) => {
     );
   };
 
-  
-  const playSound = async () => {
-    if(notifySound) return;
-    const { sound } = await Audio.Sound.createAsync(require('../../../assets/sounds/notification.mp3'));    
-    await sound.setVolumeAsync(1.0);
-    await sound.setIsLoopingAsync(true);
-    await sound.playAsync();    
-    setNotifySound(sound);
-  };
-
   useEffect(() => {
     (async() => {
-  
-      data?.data.forEach(async (item) => {
+        data?.data.forEach(async (item) => {
         if (item.attributes.status_id === 1) {
           try { 
             await updateOrder({ id: item.id, status_id: 2 }).unwrap();
-            await playSound();
+            playSound();
           } catch(e){
             console.log(e);
           }
@@ -54,11 +42,10 @@ const PendingOrders = ({ navigation }) => {
       });      
     })();
 
-    return () => { 
-      notifySound?.stopAsync();
-      notifySound?.unloadAsync(); 
+    return () => {
+      // stopSound();
     }
-  }, [data])  
+  }, [data]);
 
   const filteredData = data?.data.filter((item) => {
     const orderDate = new Date(item.attributes.order_date);
@@ -72,17 +59,8 @@ const PendingOrders = ({ navigation }) => {
       {isLoading && <View className='flex-1 justify-center'>
           <ActivityIndicator color={'#f97316'} size={'large'}/>
         </View>}
-      { notifySound && 
-        <TouchableOpacity className='flex-1 w-full h-full justify-center absolute top-0 bottom-0 z-10 bg-gray-100/50' onPress={() => {
-          notifySound?.stopAsync() 
-          notifySound?.unloadAsync();
-          setNotifySound(null);
-        }}>
-          <View className='flex-1 w-full h-full justify-center items-center'>
-            <Icon name='notifications-off' type="ionicon" color={'#f97316'} size={32}/>
-          </View>
-        </TouchableOpacity> 
-        }
+      <NotificationPanel status={isPlaying} stopSound={stopSound}/>
+
       {!isLoading && data && (
         <FlatList
           data={filteredData}
@@ -96,5 +74,20 @@ const PendingOrders = ({ navigation }) => {
     </>
   );
 };
+
+
+const NotificationPanel = ({ status, stopSound }) => {
+  return ( status ? 
+        <TouchableOpacity className='flex-1 w-full h-full justify-center absolute top-0 bottom-0 z-10 bg-gray-100/50' 
+        onPress={async () => {
+          await stopSound();
+        }}>
+          <View className='flex-1 w-full h-full justify-center items-center'>
+            <Icon name='notifications-off' type="ionicon" color={'#f97316'} size={32}/>
+          </View>
+        </TouchableOpacity> 
+        : <></>
+  );
+}
 
 export default PendingOrders;

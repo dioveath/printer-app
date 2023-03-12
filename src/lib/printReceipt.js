@@ -26,7 +26,7 @@ const printReceipt = (item, domainUri) => {
         .size(1, 1)
         .bold(true)
         .text(`${new Date(
-          item.attributes.invoice_date
+          item.attributes.order_date_time
         ).toLocaleString()}`).newline()
         
         .size(2, 2)

@@ -2,12 +2,14 @@
 
 
 ## Features
+### version 0.0.5
 - Basic Login with SliceUp (done)
 - Listing all orders from pending to completed (done)
 - Updating orders through the app (done)
 - Add Epson Printer support (done)
 - Print the order receipt (done)
-- Create customizable printer receipt system 
+
+### version 0.0.7
 - Setting up domain on initial screen (done)
 - Status for showcasing if the app is connected to internet and printer (done)
 - Sort the orders according to ordered time (done)
@@ -16,6 +18,7 @@
 - Reimplement and upgrade to new UIs (done)
 - Change the order received to order pending as soon as we get the order (done)
 
+### version 0.1.0
 - Back Button needs to activate on text as well - (done)
 - Add Item comment - (done)
 - Pound sign before prices on multiple pages - (done)
@@ -32,3 +35,9 @@
 - Sound should repeat until user intervenes - done
 - Add timed Order approval - done
 - Update Bluetooth configuration flow - done
+
+
+### Version 0.1.1
+- Auto-print receipt on accepting order
+- Receipt needs to have the expected delivery time
+- Create customizable printer receipt system 

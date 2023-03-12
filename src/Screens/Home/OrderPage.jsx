@@ -52,10 +52,11 @@ export default function OrderPage({ navigation, route }) {
   const { data: item, isLoading, isFetching: isOrderFetching, isError, error } = useGetOrderQuery({ id: propsItem.id });
   const [updateOrder, { isLoading: isFetching }] = useUpdateOrderMutation();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const { domain } = useSelector((state) => state.setup);
 
   const { isEnabled } = useSelector((state) => state.bluetooth);
   const { device, status } = useSelector((state) => state.printer);
-  const canPrint = (device && isEnabled && status?.connection === 'CONNECT');  
+  const canPrint = (device && isEnabled && status?.connection === 'CONNECT' && status?.paper === 'PAPER_OK');  
 
   const canUpdate = item?.attributes.status_id < 5;  
   const canRevert = item?.attributes.status_id > 1;
@@ -140,7 +141,7 @@ export default function OrderPage({ navigation, route }) {
               <Text className='font-nebula'>{isMissed ? 'Missed' : item.attributes.status.status_name}</Text>
             </View>
           </View>
-            <TouchableOpacity onPress={() => { if(canPrint) printReceipt(item, "https://sliceup.pizza/assets/media/uploads/logo%203.png"); }}>
+            <TouchableOpacity onPress={() => { if(canPrint) printReceipt(item, domain); }}>
             <View className={`h-10 w-10 border-orange-500 border-2 rounded-full flex flex-col justify-center items-center ${canPrint ? 'border-orange-500' : 'border-gray-500'}`}>
               <Icon type="material-community" name="printer-outline" size={20} />
             </View>

@@ -33,7 +33,8 @@ export default function OrderCard({
 }) {
   const { device, status } = useSelector((state) => state.printer);
   const { isEnabled: enabled } = useSelector((state) => state.bluetooth);
-  const isConnected = (device && enabled && status?.connection === 'CONNECT');
+  const isConnected = (device && enabled && status?.connection === 'CONNECT' && status?.paper === 'PAPER_OK');
+  const { domain } = useSelector((state) => state.setup);
   
   const [updateOrder, { isLoading: isFetching }] = useUpdateOrderMutation();
 
@@ -70,7 +71,7 @@ export default function OrderCard({
       className={`${backgroundColor} text-black border-b-[1px] border-gray-100`}
       rightContent={(reset) => {
         return (
-          <TouchableOpacity onPress={() => { reset(); if(isConnected) printReceipt(item, "https://sliceup.pizza/assets/media/uploads/logo%203.png"); }}>
+          <TouchableOpacity onPress={() => { reset(); if(isConnected) printReceipt(item, domain); }}>
           <View
             className={
               `w-full h-full flex flex-row items-center justify-center ${isConnected ? "bg-orange-500" : "bg-gray-400"}`

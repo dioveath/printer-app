@@ -30,3 +30,5 @@
 - Add Payment method in Order Page - done
 - Improve and Beautify printer receipt - done
 - Sound should repeat until user intervenes - done
+- Add timed Order approval - done
+- Update Bluetooth configuration flow - done

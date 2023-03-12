@@ -13,19 +13,19 @@ import { setPrinter, setPrinterError, setPrinterPending, setPrinterStatus } from
 import { bleManager } from '../../lib/bleManager';
 
 import { CustomButton } from "../../Components/CustomButton";
+import { CustomProgressIndicator } from "../../Components/CustomProgressIndicator";
 
 
 export default function OptionScreen({ navigation }) {
   const dispatch = useDispatch();
   const { isEnabled: enabled, isPending } = useSelector((state) => state.bluetooth);
-  const { device: connectedPrinter, status } = useSelector((state) => state.printer);
-  const printer = useSelector((state) => state.printer);
+  const { device: connectedPrinter, status, isPending: isPrinterPending } = useSelector((state) => state.printer);
   const { removeItem } = useAsyncStorage("credentials");
-  const { setItem: savePrinter } = useAsyncStorage("printer");
+  const { setItem: savePrinter, removeItem: removePrinter } = useAsyncStorage("printer");
   const [found, setFound] = useState([]);
   const [scanning, setScanning] = useState(false);
   
-  const canPrint = enabled && connectedPrinter && status?.connection === "CONNECT";
+  const canPrint = enabled && connectedPrinter && status?.connection === "CONNECT" && status?.paper === "PAPER_OK";
   
   const toggleBluetooth = async (value) => {
     try {
@@ -132,12 +132,19 @@ export default function OptionScreen({ navigation }) {
             <Text className='font-nebula text-xs px-6 py-4 text-gray-500' numberOfLines={4}>No printer found. </Text>
         )}
 
+        { found && found.length > 0 && (
+            <Text className='font-nebula text-xs px-6 py-4 text-gray-500' numberOfLines={4}> 
+              Select a printer to connect. Please disconnect any other printer before you connect. 
+            </Text>
+        )}
+
         {found.map((d) => {
           if(connectedPrinter && connectedPrinter.bt === d.bt) return;
           return (
             <ListItem
               bottomDivider
               key={d.bt}
+              disabled={connectedPrinter || isPrinterPending}
               onPress={async () => {
                 try {
                   console.log("Selecting: " + d.bt);
@@ -161,15 +168,40 @@ export default function OptionScreen({ navigation }) {
 
       <Text className='font-nebula-semibold px-6'>Connected Printer </Text>
       <Text className='font-nebula text-xs px-6 text-gray-500' numberOfLines={4}>Your connected printer and its status. You can only print when there is green symbol. It might take some seconds to configure everything. </Text>
-      { connectedPrinter && (
+      { isPrinterPending && ( 
+        <View className="w-full my-6 px-6 flex flex-row justify-center items-center">
+          <CustomProgressIndicator/>          
+        </View>
+       ) }
+      { connectedPrinter && !isPrinterPending && (
         <>
-        <View className="my-2 px-6">
-          <View className='flex flex-row gap-2 items-center'>
-          <Text className="font-nebula text-xs text-gray-700"> {connectedPrinter.name} </Text>
-          <View className={`h-2 w-2 rounded-full ${canPrint ? 'bg-green-500' : 'border-[1px] border-green-500'}`}/>                    
+        <View className="my-2 px-6 flex flex-row justify-between">
+          <View>
+            <View className='flex flex-row gap-2 items-center'>
+              <Text className="font-nebula text-xs text-gray-700"> {connectedPrinter.name} </Text>
+              <View className={`h-2 w-2 rounded-full ${canPrint ? 'bg-green-500' : 'border-[1px] border-green-500'}`}/>                    
+            </View>
+            <Text className="font-nebula text-xs text-gray-700"> {connectedPrinter.bt} </Text>
           </View>
-          
-          <Text className="font-nebula text-xs text-gray-700"> {connectedPrinter.bt} </Text>
+          <View>
+            <Button 
+            color={'#F97316'}
+            size="sm"
+            titleStyle={{ fontFamily: 'Montserrat-SemiBold'}}
+            radius={100}
+            buttonStyle={{paddingHorizontal: 10}}
+            onPress={async () => {
+              try {
+                dispatch(setPrinterPending());
+                await removePrinter();
+                dispatch(setPrinter(null));
+              } catch (e) {
+                console.log("Error: " + e.message);
+                dispatch(setPrinterError({ error: e.message }));
+              }
+            }}
+            loading={isPrinterPending}> Disconnect </Button>
+          </View>
         </View>
 
         <View className='flex flex-row pb-4'>

@@ -1,7 +1,8 @@
 import EscPosPrinter from "react-native-esc-pos-printer";
 
-const printReceipt = (item, logoUri) => {
+const printReceipt = (item, domainUri) => {
     console.log("Printing receipt...");
+
     // check if there is a active connection to printer
     // if not, navigate to options screen
     try {
@@ -31,19 +32,15 @@ const printReceipt = (item, logoUri) => {
         .size(2, 2)
         .bold(false)
         .text(`${item.attributes.first_name} ${item.attributes.last_name}`).newline()
-        .text(`${item.attributes.payment}`).newline().newline()
+        .newline().newline()
 
-        .size(2, 2).bold(false)
-        .text(`${item.attributes.formatted_address}`).newline().newline()
-        .size(2, 2).bold(true)
-        .text(`${item.attributes.telephone}`).newline()
 
         .textLine(48, { left: "=", right: "=", gapSymbol: "=" })
         .newline();
 
       
       item.attributes.order_menus.forEach((menu) => {
-        printObj.bold(true).size(2, 2);
+        printObj.bold(true).size(1, 1);
         printObj.textLine(48, {
           left: `${menu.quantity}x ${menu.name}`,
           right: `£${parseFloat(menu.price).toFixed(2)}`,
@@ -60,8 +57,9 @@ const printReceipt = (item, logoUri) => {
           }).newline();
         });
 
-        printObj.newline().align('left')
-          .text(`Notes: ${menu.comment}`).newline()
+        if(menu.comment)
+          printObj.newline().align('left')
+            .text(`Notes: ${menu.comment}`).newline()
 
         printObj.newline();
       });
@@ -69,7 +67,8 @@ const printReceipt = (item, logoUri) => {
       printObj.size(2, 2).bold(true);
       printObj.textLine(48, { left: "=", right: "=", gapSymbol: "=" }).newline();
 
-      printObj.align('left').text(`Notes: ${item.attributes.comment}`).newline().newline();
+      if(item.attributes.comment)
+        printObj.size(1, 1).bold(true).align('left').text(`Notes: ${item.attributes.comment}`).newline().newline();
 
 
       printObj.size(2, 2).bold(false);
@@ -96,6 +95,18 @@ const printReceipt = (item, logoUri) => {
         gapSymbol: ".",
       });
 
+
+      printObj
+      .newline().newline().newline()
+      .align('center')
+      .size(2, 2).bold(true)
+      .text(`${item.attributes.payment?.toUpperCase()}`).newline()
+      .text(`${item.attributes.order_type?.toUpperCase()}`).newline()
+      .size(2, 2).bold(false)      
+      .text(`${item.attributes.formatted_address}`).newline().newline()
+      .size(2, 2).bold(true)
+      .text(`${item.attributes.telephone}`).newline()              
+
       printObj
         .size(1, 1)
         .newline()
@@ -103,7 +114,14 @@ const printReceipt = (item, logoUri) => {
         .newline()
         .align("center")
         .bold(true)
-        .text("Thank you for your order!");
+        .text("Thank you for your order!")
+        .newline()
+        .underline(true)
+        .text(domainUri)
+        .newline()
+        .newline()
+
+        
 
       printObj.newline().cut().send();
 

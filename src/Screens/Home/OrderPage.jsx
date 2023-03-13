@@ -86,6 +86,7 @@ export default function OrderPage({ navigation, route }) {
     const orderDateTime = formatDate(orderDate);
     const orderTime = orderDateTime.split(' ')[1];
 
+    printReceipt(item, domain);
     updateOrder({ id: item.id, status_id: 3, order_time: orderTime});
   }
 

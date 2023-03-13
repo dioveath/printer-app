@@ -38,6 +38,8 @@
 
 
 ### Version 0.1.1
-- Auto-print receipt on accepting order
-- Receipt needs to have the expected delivery time
-- Create customizable printer receipt system 
+- Auto-print receipt on accepting order (done)
+- Receipt needs to have the expected delivery time (done)
+- Cash orders need to be red and highlighted (pending)
+- Enable ring notification on background
+- Create customizable printer receipt system
